@@ -16,6 +16,19 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
+    # watch:
+    #   - action: sync
+    #     path: ./web
+    #     target: /src/web
+    #     ignore:
+    #       - node_modules/
+    #   - action: rebuild
+    #     path: package.json
   # backend:
   #   build:
   #     context: ./selectcode_tasks_backend
