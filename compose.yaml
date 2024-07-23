@@ -9,6 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   frontend:
+    container_name: frontend
     build:
       context: ./selectcode_tasks_frontend
       dockerfile: Dockerfile
@@ -16,6 +17,19 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+  backend:
+    container_name: backend
+    build:
+      context: ./selectcode_tasks_backend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4000:4000
     develop:
       watch:
         - action: rebuild
