@@ -1,2 +1,14 @@
-<h1>Welcome to Svelte</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { trpc } from '$lib/trpc/trpc';
+	onMount(() => {
+		callMe();
+	});
+	const callMe = async function () {
+		const { greeting } = await trpc.hello.query({ name: 'Yes' });
+		text = greeting;
+	};
+	$: text = '';
+</script>
+
+<p class="">{text}</p>

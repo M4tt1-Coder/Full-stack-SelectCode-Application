@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 describe('AppController', () => {
+  // prepare the controller instance for testing
   let appController: AppController;
 
   beforeEach(async () => {
