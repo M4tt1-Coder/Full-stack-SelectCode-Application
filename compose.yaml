@@ -8,6 +8,7 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
+  # svelte kit service frontend
   frontend:
     container_name: frontend
     build:
@@ -21,6 +22,7 @@ services:
       watch:
         - action: rebuild
           path: .
+  # nestjs + tRPC server backend
   backend:
     container_name: backend
     build:
@@ -34,6 +36,17 @@ services:
       watch:
         - action: rebuild
           path: .
+  # the postgres container
+  db:
+    image: postgres:16-alpine
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=root # thats the default user name
+      - POSTGRES_PASSWORD=superSecret # normally we would be using a .env variable BUT for showcases this is valid
+      - POSTGRES_DB=selectcodeDb
+    ports:
+      - 5432:5432
 
     # watch:
     #   - action: sync
