@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TrpcModule } from './trpc/trpc.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
-  imports: [TrpcModule],
+  imports: [TrpcModule, DatabaseModule],
   controllers: [AppController],
   providers: [AppService],
 })

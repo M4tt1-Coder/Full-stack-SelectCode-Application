@@ -15,3 +15,62 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ---- Relations ----
+// user X project -> 1 : n
+// user X task    -> n : m
+// project X task -> 1 : m
+// -------------------
+
+// Model for every user
+model User {
+  id            String    @id @unique
+  name          String
+  password      String
+  role          Role      @default(Intern)
+  email         String    @unique
+  lastimeonline DateTime  @default(now())
+  projects      Project[]
+  tasks         Task[]
+}
+
+// Project entity
+model Project {
+  id          String @id @unique
+  name        String
+  description String
+  status      Status @default(Preparing)
+  // 1 : n
+  tasks       Task[]
+  creatorId   String @unique
+  creator     User   @relation(fields: [creatorId], references: [id])
+}
+
+// Tasks entity 
+model Task {
+  id          String  @id @unique
+  name        String
+  status      Status  @default(Preparing)
+  description String
+  // user which should work on the project-task
+  assignees   User[]
+  // relation with project n : 1 (project)
+  Project     Project @relation(fields: [projectId], references: [id])
+  projectId   String
+}
+
+// Roles a user can have
+// Enum [1]
+enum Role {
+  Intern
+  Expert
+  Admin
+  SuperAdmin
+}
+
+// Status in which a task or project can be
+enum Status {
+  Preparing
+  Development
+  Finished
+}
