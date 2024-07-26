@@ -24,6 +24,8 @@ services:
           path: .
   # nestjs + tRPC server backend
   backend:
+    depends_on:
+      - postgres
     container_name: backend
     build:
       context: ./selectcode_tasks_backend
@@ -36,8 +38,11 @@ services:
       watch:
         - action: rebuild
           path: .
+    env_file:
+      - ./selectcode_tasks_backend/.env
+
   # the postgres container
-  db:
+  postgres:
     image: postgres:16-alpine
     restart: always
     shm_size: 128mb
