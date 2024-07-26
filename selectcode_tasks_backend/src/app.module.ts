@@ -8,6 +8,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 
+// I had problems with connecting to my database but I found a solution here
+// https://stackoverflow.com/questions/33357567/econnrefused-for-postgres-on-nodejs-with-dockers
+
 @Module({
   imports: [
     TrpcModule,

@@ -5,8 +5,8 @@
 		callMe();
 	});
 	const callMe = async function () {
-		const { greeting } = await trpc.test.query({ data: 'Wampe' });
-		text = greeting;
+		const { msg } = await trpc.get.query({ name: 'Paul' });
+		text = msg;
 	};
 	$: text = '';
 </script>

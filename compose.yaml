@@ -15,7 +15,7 @@ services:
       context: ./selectcode_tasks_frontend
       dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     ports:
       - 3000:3000
     develop:
@@ -25,76 +25,35 @@ services:
   # nestjs + tRPC server backend
   backend:
     depends_on:
-      - postgres
+      - db
+    restart: always
     container_name: backend
     build:
       context: ./selectcode_tasks_backend
       dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
+        - DB_TYPE=postgres
+        - PG_USER=postgres
+        - PG_PASSWORD=postgres
+        - PG_DB=postgres
+        - PG_PORT=5432
+        - PG_HOST=db
     ports:
       - 4000:4000
     develop:
       watch:
         - action: rebuild
           path: .
-    env_file:
-      - ./selectcode_tasks_backend/.env
+    # env_file:
+    #   - ./selectcode_tasks_backend/.env
 
-  # the postgres container
-  postgres:
-    image: postgres:16-alpine
-    restart: always
-    shm_size: 128mb
+  db:
+    container_name: db
+    image: postgres:12
     environment:
-      - POSTGRES_USER=root # thats the default user name
-      - POSTGRES_PASSWORD=superSecret # normally we would be using a .env variable BUT for showcases this is valid
-      - POSTGRES_DB=selectcodeDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - 5432:5432
-
-    # watch:
-    #   - action: sync
-    #     path: ./web
-    #     target: /src/web
-    #     ignore:
-    #       - node_modules/
-    #   - action: rebuild
-    #     path: package.json
-  # backend:
-  #   build:
-  #     context: ./selectcode_tasks_backend
-  #     dockerfile: Dockerfile
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
-
+      - "5432:5432"
