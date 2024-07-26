@@ -36,7 +36,8 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # dotenv environment variable files
-.env
+# ! a .env file should never be included BUT it holds a default connections string to a showcase project so it will never be used for production
+# .env
 .env.development.local
 .env.test.local
 .env.production.local
