@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { initTRPC } from '@trpc/server';
 
+// TODO - Add a context definition
+
 @Injectable()
 export class TrpcService {
   trpc = initTRPC.create();
