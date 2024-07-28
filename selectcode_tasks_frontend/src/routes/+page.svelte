@@ -1,14 +1,22 @@
+<!-- TODO - Create index homepage of the app -->
+
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { trpc } from '$lib/trpc/trpc';
-	onMount(() => {
-		callMe();
-	});
-	const callMe = async function () {
-		const { msg } = await trpc.get.query({ name: 'Paul' });
-		text = msg;
-	};
-	$: text = '';
+
+	// import type { PageData } from './$types';
+	// export let data: PageData;
+
+	onMount(() => test2());
+
+	async function test2() {
+		const user = await trpc.user.create.mutate({
+			name: 'Max',
+			password: 'password',
+			email: 'testing@examples.com'
+		});
+		console.log(user);
+	}
 </script>
 
-<p class="">{text}</p>
+<button on:click={test2}>Click</button>

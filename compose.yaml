@@ -11,6 +11,8 @@ services:
   # svelte kit service frontend
   frontend:
     container_name: frontend
+    depends_on:
+      - backend
     build:
       context: ./selectcode_tasks_frontend
       dockerfile: Dockerfile
