@@ -100,6 +100,11 @@ export function User_ConvertEntityToDTO(user: User): UserDTO {
 export function UserList_ConvertEntityToDTO(userList: User[]): UserDTO[] {
   const output: UserDTO[] = [];
 
+  if (typeof userList === 'undefined' || userList.length === 0) {
+    console.log('No users');
+    return output;
+  }
+
   userList.forEach((user) => {
     output.push(User_ConvertEntityToDTO(user));
   });
@@ -114,6 +119,11 @@ export function UserList_ConvertEntityToDTO(userList: User[]): UserDTO[] {
  */
 export function UserList_ConvertDTOtoEntity(userList: UserDTO[]): User[] {
   const output: User[] = [];
+
+  if (typeof userList === 'undefined' || userList.length === 0) {
+    console.log('No users');
+    return output;
+  }
 
   userList.forEach((user) => {
     output.push(User_ConvertDTOtoEntity(user));

@@ -103,6 +103,10 @@ export function projectList_ConvertEntityToDTO(
 ): ProjectDTO[] {
   const output: ProjectDTO[] = [];
 
+  if (typeof projects === 'undefined' || projects.length === 0) {
+    return output;
+  }
+
   projects.forEach((project: Project) => {
     output.push(project_ConvertEntityToDTO(project));
   });
@@ -120,6 +124,10 @@ export function projectList_ConvertDTOtoEntity(
   projects: ProjectDTO[],
 ): Project[] {
   const output: Project[] = [];
+
+  if (typeof projects === 'undefined' || projects.length === 0) {
+    return output;
+  }
 
   projects.forEach((project: ProjectDTO) => {
     output.push(project_ConvertDTOtoEntity(project));

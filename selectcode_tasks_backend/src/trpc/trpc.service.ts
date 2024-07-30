@@ -3,6 +3,11 @@ import { initTRPC } from '@trpc/server';
 
 // TODO - Add a context definition
 
+/**
+ * _ Provider _
+ *
+ * Initialization function for the tRPC server.
+ */
 @Injectable()
 export class TrpcService {
   trpc = initTRPC.create();

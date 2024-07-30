@@ -9,6 +9,11 @@ import {
 import { Repository } from 'typeorm';
 import { Role } from 'lib/enums/roles';
 
+/**
+ * _ Provider _
+ *
+ * Provides all the functionality for handling the user entity.
+ */
 @Injectable()
 export class UsersService {
   constructor(

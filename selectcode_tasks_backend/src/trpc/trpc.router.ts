@@ -4,16 +4,16 @@ import { TrpcService } from './trpc.service';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError } from '@trpc/server';
 import { UsersService } from 'src/users/users.service';
-// import { UserDTO } from 'src/users/user.entity';
-import * as b from 'bcrypt';
 import { v4 } from 'uuid';
 import { defaultRole, isMember, stringToRole } from 'lib/enums/roles';
-// import { UserDTO } from 'src/users/user.entity';
-// import { Project } from 'src/projects/project.entity';
+import { SHA256 } from 'crypto-js';
 
 // trpc docs -> https://trpc.io/docs/quickstart
 //! tRPC can't handle classes in a procedure output -> needs to be type
 
+/**
+ * The main router tRPC server endpoint -> handles all requests and responses in the monorepo
+ */
 @Injectable()
 export class TrpcRouter {
   // using dependency injection -> can use services
@@ -29,6 +29,7 @@ export class TrpcRouter {
     // user route
     user: this.trpc.router({
       // get endpoint for user
+      // * (means endpoint has been tested and it is working as expected)
       get: this.trpc.procedure
         .input(
           z.object({
@@ -59,9 +60,10 @@ export class TrpcRouter {
             });
           }
 
-          return { result: user };
+          return user;
         }),
       // get all user OR all with one role
+      // *
       getAll: this.trpc.procedure
         .input(
           z.object({
@@ -78,6 +80,7 @@ export class TrpcRouter {
           return await this.users.findAll();
         }),
       // create endpoint for users
+      // *
       create: this.trpc.procedure
         .input(
           z.object({
@@ -86,17 +89,6 @@ export class TrpcRouter {
             email: z.string().email(),
           }),
         )
-        // .output(
-        //   z.object({
-        //     name: z.string().min(3),
-        //     password: z.string(),
-        //     email: z.string().email(),
-        //     id: z.string().uuid(),
-        //     role: z.enum(['Intern', 'Expert', 'Admin', 'SuperAdmin']),
-        //     lto: z.date(),
-        //     projects: z.array(Project).optional(),
-        //   }),
-        // )
         .mutation(async ({ input }) => {
           const { email, name, password } = input;
 
@@ -108,23 +100,13 @@ export class TrpcRouter {
             });
           }
 
-          // TODO - hashing doesn't work
           // hashing the password
-          let passwordHash: string = '';
-          b.hash(password, 10, (err, hash) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            passwordHash = hash;
-          });
-
           // create a new user
           const user = await this.users.create({
             name,
             email,
-            password: passwordHash,
-            id: v4(),
+            password: SHA256(password).toString(),
+            id: v4(), // uuid version 4
             role: defaultRole(),
             lastTimeOnline: new Date(),
             projects: [],
@@ -137,27 +119,10 @@ export class TrpcRouter {
             });
           }
 
-          const output = {
-            name: user.name,
-            id: user.id,
-            email: user.email,
-            password: user.password,
-            role: user.role,
-            // projects: user.projects,
-            lto: user.lto,
-          };
-
-          return {
-            name: output.name,
-            id: output.id,
-            email: output.email,
-            password: output.password,
-            // role: user.role,
-            // projects: user.projects,
-            lto: output.lto,
-          };
+          return user;
         }),
       // delete user be his / her id
+      // *
       delete: this.trpc.procedure
         .input(
           z.object({
@@ -177,9 +142,10 @@ export class TrpcRouter {
             });
           }
 
-          return {};
+          return user;
         }),
       // update a user
+      // *
       update: this.trpc.procedure
         .input(
           z.object({
@@ -187,38 +153,34 @@ export class TrpcRouter {
             name: z.string().optional(),
             password: z.string().optional(),
             email: z.string().email().optional(),
-            role: z.string().optional(), // get Role enum type from string
-            projects: z.array(
-              z.string().uuid({ message: 'A project id was not a UUID!' }),
-            ), // TODO - list of ids of some projects -> loop through projects & reassign them + check if all ids belong to a project -> in project service
+            role: z
+              .enum(['Intern', 'Expert', 'Admin', 'SuperAdmin'])
+              .optional(), // get Role enum type from string
           }),
         )
         .mutation(async ({ input }) => {
-          const { id, name, password, role, /*projects*/ email } = input;
+          const { id, name, password, role, email } = input;
 
           // check for right enum type of the role input
-          if (!isMember(role)) {
-            throw new TRPCError({
-              message: `Role ${role} does not exist!`,
-              code: 'BAD_REQUEST',
-            });
+          if (role) {
+            if (!isMember(role)) {
+              throw new TRPCError({
+                message: `Role ${role} does not exist!`,
+                code: 'BAD_REQUEST',
+              });
+            }
           }
 
           const convertedRole = stringToRole(role);
 
-          // TODO -  get the projects with these ids
-
           const user = this.users.update(id, {
             name: name,
             email,
-            password,
+            password: SHA256(password).toString(),
             role: convertedRole,
-            //projects,
           });
 
-          return {
-            updatedUser: user,
-          };
+          return user;
         }),
     }),
     // --------------------------
@@ -228,6 +190,8 @@ export class TrpcRouter {
     // project route
     project: this.trpc.router({}),
     // ------------
+    //
+    //
     //
     // task route
     task: this.trpc.router({}),

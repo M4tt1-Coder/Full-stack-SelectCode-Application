@@ -104,6 +104,10 @@ export function task_ConvertEntityToDTO(task: Task): TaskDTO {
 export function taskList_ConvertEntityToDTO(tasks: Task[]): TaskDTO[] {
   const output: TaskDTO[] = [];
 
+  if (typeof tasks === 'undefined' || tasks.length === 0) {
+    return output;
+  }
+
   tasks.forEach((task: Task) => {
     output.push(task_ConvertEntityToDTO(task));
   });
@@ -119,6 +123,10 @@ export function taskList_ConvertEntityToDTO(tasks: Task[]): TaskDTO[] {
  */
 export function taskList_ConvertDTOtoEntity(tasks: TaskDTO[]): Task[] {
   const output: Task[] = [];
+
+  if (typeof tasks === 'undefined' || tasks.length === 0) {
+    return output;
+  }
 
   tasks.forEach((task: TaskDTO) => {
     output.push(task_ConvertDTOtoEntity(task));
