@@ -66,6 +66,7 @@ export type ProjectDTO = {
  * @param project - DTO to entity
  */
 export function project_ConvertDTOtoEntity(project: ProjectDTO): Project {
+  if (!project || typeof project === 'undefined') return null;
   return {
     name: project.name,
     id: project.id,
@@ -82,6 +83,7 @@ export function project_ConvertDTOtoEntity(project: ProjectDTO): Project {
  * @param project - Entity to DTO
  */
 export function project_ConvertEntityToDTO(project: Project): ProjectDTO {
+  if (!project || typeof project === 'undefined') return null;
   return {
     name: project.name,
     id: project.id,

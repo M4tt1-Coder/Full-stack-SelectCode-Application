@@ -69,6 +69,7 @@ export type TaskDTO = {
  * @param task - DTO to entity
  */
 export function task_ConvertDTOtoEntity(task: TaskDTO): Task {
+  if (!task || typeof task === 'undefined') return null;
   return {
     id: task.id,
     name: task.name,
@@ -85,6 +86,7 @@ export function task_ConvertDTOtoEntity(task: TaskDTO): Task {
  * @param task - Entity to DTO
  */
 export function task_ConvertEntityToDTO(task: Task): TaskDTO {
+  if (!task || typeof task === 'undefined') return null;
   return {
     id: task.id,
     name: task.name,

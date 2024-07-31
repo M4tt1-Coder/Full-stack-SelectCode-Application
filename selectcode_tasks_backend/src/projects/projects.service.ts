@@ -24,15 +24,35 @@ export class ProjectsService {
   async findAll(status?: Status): Promise<ProjectDTO[]> {
     if (status) {
       return projectList_ConvertEntityToDTO(
-        await this.projectRepo.find({ where: { status } }),
+        await this.projectRepo.find({
+          where: { status },
+          relations: {
+            creator: true,
+            tasks: true,
+          },
+        }),
       );
     }
-    return projectList_ConvertEntityToDTO(await this.projectRepo.find());
+    return projectList_ConvertEntityToDTO(
+      await this.projectRepo.find({
+        relations: {
+          creator: true,
+          tasks: true,
+        },
+      }),
+    );
   }
 
+  // solution to relation problem -> https://typeorm.io/many-to-one-one-to-many-relations
   async findOne(id: string): Promise<ProjectDTO> {
     return project_ConvertEntityToDTO(
-      await this.projectRepo.findOne({ where: { id } }),
+      await this.projectRepo.findOne({
+        where: { id: id },
+        relations: {
+          creator: true,
+          tasks: true,
+        },
+      }),
     );
   }
 
@@ -44,12 +64,24 @@ export class ProjectsService {
   async update(id: string, project: Partial<Project>): Promise<ProjectDTO> {
     await this.projectRepo.update(id, project);
     return project_ConvertEntityToDTO(
-      await this.projectRepo.findOne({ where: { id } }),
+      await this.projectRepo.findOne({
+        where: { id },
+        relations: {
+          creator: true,
+          tasks: true,
+        },
+      }),
     );
   }
 
   async delete(id: string): Promise<ProjectDTO> {
-    const project = await this.projectRepo.findOne({ where: { id } });
+    const project = await this.projectRepo.findOne({
+      where: { id },
+      relations: {
+        creator: true,
+        tasks: true,
+      },
+    });
     await this.projectRepo.delete(id);
     return project_ConvertEntityToDTO(project);
   }

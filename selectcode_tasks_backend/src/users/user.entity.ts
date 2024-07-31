@@ -64,6 +64,9 @@ export type UserDTO = {
  * @param userDTO - Data Transfer Object for the user to be convertef into a entity
  */
 export function User_ConvertDTOtoEntity(userDTO: UserDTO): User {
+  if (!userDTO || typeof userDTO === 'undefined') {
+    return;
+  }
   return {
     name: userDTO.name,
     id: userDTO.id,
@@ -81,6 +84,9 @@ export function User_ConvertDTOtoEntity(userDTO: UserDTO): User {
  * @param user - user entity to be converted into a DTO
  */
 export function User_ConvertEntityToDTO(user: User): UserDTO {
+  if (!user || typeof user === 'undefined') {
+    return;
+  }
   return {
     name: user.name,
     id: user.id,
@@ -100,7 +106,7 @@ export function User_ConvertEntityToDTO(user: User): UserDTO {
 export function UserList_ConvertEntityToDTO(userList: User[]): UserDTO[] {
   const output: UserDTO[] = [];
 
-  if (typeof userList === 'undefined' || userList.length === 0) {
+  if (typeof userList === 'undefined' || !userList || userList.length === 0) {
     console.log('No users');
     return output;
   }

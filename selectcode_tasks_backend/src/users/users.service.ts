@@ -36,6 +36,27 @@ export class UsersService {
     );
   }
 
+  /**
+   * Uses a list of user ids to return a list of users
+   *
+   * @param userIDs - List of user ids
+   */
+  async findAllOfTask(userIDs: string[]): Promise<User[]> {
+    const output: User[] = [];
+
+    if (typeof userIDs === 'undefined' || userIDs.length === 0) {
+      console.log('No user IDs');
+    }
+
+    for (let i = 0; i < userIDs.length; i++) {
+      const user = await this.userRepo.findOne({ where: { id: userIDs[i] } });
+
+      output.push(user);
+    }
+
+    return output;
+  }
+
   async create(user: User): Promise<UserDTO> {
     const newuser = this.userRepo.create(user);
     return User_ConvertEntityToDTO(await this.userRepo.save(newuser));

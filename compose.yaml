@@ -50,6 +50,8 @@ services:
     # env_file:
     #   - ./selectcode_tasks_backend/.env
 
+  # the database only exists when running the container
+  #! you can add a volume to the settings to store data BUT for the purpose of the repository it is not necessary
   db:
     container_name: db
     image: postgres:12

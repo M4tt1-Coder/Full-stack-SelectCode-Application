@@ -20,6 +20,7 @@ import { TasksModule } from './tasks/tasks.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
+      logging: true,
     }),
     UsersModule,
     ProjectsModule,
