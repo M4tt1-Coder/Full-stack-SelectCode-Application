@@ -1,18 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TrpcService } from './trpc.service';
+import { TrpcRouter } from './trpc.router';
 
-describe('TrpcService', () => {
-  let service: TrpcService;
+describe('tRPC endpoint tests', () => {
+  let router: TrpcRouter;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TrpcService],
+      providers: [TrpcRouter],
     }).compile();
 
-    service = module.get<TrpcService>(TrpcService);
+    router = module.get<TrpcRouter>(TrpcRouter);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('project endpoints', async () => {
+    const caller = router.appRouter;
+
+    it('create route should return status code 400 ', async () => {
+      const res = caller.project.create({
+        ctx: {},
+        rawInput: {},
+        path: '/',
+        type: 'mutation',
+      });
+
+      expect(res).toHaveBeenCalledWith(400);
+    });
   });
 });
