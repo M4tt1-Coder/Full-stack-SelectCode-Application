@@ -28,8 +28,14 @@ export class TrpcRouter {
     private readonly tasks: TasksService,
   ) {}
 
+  /**
+   * Construct of all endpoints
+   */
   appRouter = this.trpc.router({
     // user route
+    /**
+     * user route
+     */
     user: this.trpc.router({
       // get endpoint for user
       // * (means endpoint has been tested and it is working as expected)
@@ -191,6 +197,9 @@ export class TrpcRouter {
     //
     //
     // project route
+    /**
+     * project route
+     */
     project: this.trpc.router({
       // create a new project
       // *
@@ -331,6 +340,9 @@ export class TrpcRouter {
     //
     //
     // task route
+    /**
+     * task route
+     */
     task: this.trpc.router({
       // create a new task
       // *
@@ -499,6 +511,11 @@ export class TrpcRouter {
     }),
   });
 
+  /**
+   * Adds the trpc server to the nestjs server
+   *
+   * @param app - Instance of the nestjs server build
+   */
   async applyMiddleware(app: INestApplication) {
     app.use(
       `/trpc`,
@@ -509,4 +526,7 @@ export class TrpcRouter {
   }
 }
 
+/**
+ * Instance of the tRPC Express middleware and routing types
+ */
 export type AppRouter = TrpcRouter[`appRouter`];

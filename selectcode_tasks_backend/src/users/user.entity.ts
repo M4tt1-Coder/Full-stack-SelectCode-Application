@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 /**
- *
+ * The user entity
  */
 @Entity()
 // entity type for a user

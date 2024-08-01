@@ -19,7 +19,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-// entity for a project
+/**
+ * Entity representing a project.
+ */
 @Entity()
 export class Project {
   @PrimaryGeneratedColumn('uuid')

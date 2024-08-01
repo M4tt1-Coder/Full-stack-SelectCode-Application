@@ -3,6 +3,9 @@ import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+/**
+ * User container module
+ */
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   providers: [UsersService],

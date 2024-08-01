@@ -11,6 +11,9 @@ import { TasksModule } from './tasks/tasks.module';
 // I had problems with connecting to my database but I found a solution here
 // https://stackoverflow.com/questions/33357567/econnrefused-for-postgres-on-nodejs-with-dockers
 
+/**
+ * Main entry point for the whole nestjs app
+ */
 @Module({
   imports: [
     TrpcModule,

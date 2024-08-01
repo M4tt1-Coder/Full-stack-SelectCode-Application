@@ -5,6 +5,11 @@ import { UsersModule } from 'src/users/users.module';
 import { TasksModule } from 'src/tasks/tasks.module';
 import { ProjectsModule } from 'src/projects/projects.module';
 
+/**
+ * Heart of the trcp scope
+ *
+ * Spreads the trpc functionality in the application.
+ */
 @Module({
   imports: [UsersModule, TasksModule, ProjectsModule],
   providers: [TrpcService, TrpcRouter],

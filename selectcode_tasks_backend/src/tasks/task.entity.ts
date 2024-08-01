@@ -20,7 +20,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-// This is the entity for a single task
+/**
+ * This is the entity for a single task
+ */
 @Entity()
 export class Task {
   @PrimaryGeneratedColumn('uuid')
@@ -35,7 +37,11 @@ export class Task {
   @Column({ nullable: false })
   status: Status;
 
-  // n : m relation with a user
+  /**
+   *  n : m relation with a user
+   *
+   * @property All user that are assigned to this task.
+   */
   @ManyToMany(() => User)
   @JoinTable()
   assignees: User[];
