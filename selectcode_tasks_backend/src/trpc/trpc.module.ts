@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TrpcService } from './trpc.service';
 import { TrpcRouter } from './trpc.router';
-import { DatabaseModule } from 'src/database/database.module';
+import { UsersModule } from 'src/users/users.module';
+import { TasksModule } from 'src/tasks/tasks.module';
+import { ProjectsModule } from 'src/projects/projects.module';
 
+/**
+ * Heart of the trcp scope
+ *
+ * Spreads the trpc functionality in the application.
+ */
 @Module({
-  imports: [DatabaseModule],
+  imports: [UsersModule, TasksModule, ProjectsModule],
   providers: [TrpcService, TrpcRouter],
   exports: [TrpcService],
 })

@@ -15,12 +15,14 @@ RUN npm install -g pnpm@${PNPM_VERSION}
 
 WORKDIR /usr/src/app
 COPY package.json pnpm-lock.yaml ./
+
 RUN pnpm install --frozen-lockfile
 
 COPY . .
+
 RUN pnpm build
 
 EXPOSE 4000
-CMD ["node", "dist/main.js"]
-
+# CMD ["node", "dist/src/main.js"]
+CMD ["pnpm", "start"]
 
