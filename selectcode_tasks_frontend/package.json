@@ -2,6 +2,7 @@
 	"name": "selectcode-tasks-frontend",
 	"version": "0.0.1",
 	"private": true,
+	"author": "Matthis Geißler",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",

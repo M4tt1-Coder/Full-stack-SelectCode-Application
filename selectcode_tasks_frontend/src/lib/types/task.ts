@@ -1,5 +1,5 @@
-import { Project } from './project';
-import { User } from './user';
+import type { Project } from './project';
+import type { User } from './user';
 
 export type Task = {
 	id: string;
