@@ -1,4 +1,4 @@
-import { trpc } from '$lib/trpc/trpc.server';
+import { trpc } from '$lib/trpc/trpc';
 import type { Project } from '$lib/types/project';
 
 // get

@@ -1,4 +1,4 @@
-import { trpc } from '$lib/trpc/trpc.server';
+import { trpc } from '$lib/trpc/trpc';
 import type { User } from '$lib/types/user';
 
 // get
