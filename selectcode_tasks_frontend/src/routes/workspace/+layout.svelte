@@ -1,15 +1,11 @@
 <script lang="ts">
-	import { signedUserID } from '$lib/stores/signedInUserId';
-	import { onMount, beforeUpdate } from 'svelte';
-	import { routesProtected } from '$lib/middleware/authenticationMiddleware';
+	// import { signedUserID } from '$lib/stores/signedInUserId';
+	// import { onMount } from 'svelte';
+	// import { routesProtected } from '$lib/middleware/authenticationMiddleware';
 
-	onMount(() => {
-		routesProtected($signedUserID);
-	});
-
-	beforeUpdate(() => {
-		routesProtected($signedUserID);
-	});
+	// onMount(() => {
+	// 	routesProtected($signedUserID);
+	// });
 </script>
 
 <slot />

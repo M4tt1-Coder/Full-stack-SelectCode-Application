@@ -269,7 +269,7 @@
 					/>
 				</div>
 				<!-- sign in / sign up section -->
-				<div class="row-span-2 h-full w-full items-center justify-center">
+				<div class="row-span-2 h-full w-full flex items-center justify-center">
 					<div class="grid grid-cols-1 grid-rows-2 w-full h-full">
 						<!-- sign in button -->
 						<div class="row-span-1 w-full h-full flex items-center justify-center">
