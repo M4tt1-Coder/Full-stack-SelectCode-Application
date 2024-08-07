@@ -19,6 +19,7 @@ export default {
 				hxl: { raw: '(min-height: 800px)' },
 				till_hxl: { raw: '(max-height: 800px)' },
 				h2xl: { raw: '(min-height: 900px)' },
+				till_h2xl: { raw: '(max-height: 900px)' },
 				till_xl: { raw: '(max-width: 1280px)' },
 				till_sm: { raw: '(max-width: 640px)' },
 				till_md: { raw: '(max-width: 768px)' },

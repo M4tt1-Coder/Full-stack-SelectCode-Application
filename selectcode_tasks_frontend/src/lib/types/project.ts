@@ -1,4 +1,4 @@
-import type { Task } from 'vitest';
+import type { Task } from './task';
 import type { User } from './user';
 
 export type Project = {

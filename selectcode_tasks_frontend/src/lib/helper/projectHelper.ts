@@ -1,5 +1,6 @@
 import { trpc } from '$lib/trpc/trpc';
 import type { Project } from '$lib/types/project';
+import { getAll as getSuperAdmin } from './userHelper';
 
 // get
 /**
@@ -25,7 +26,9 @@ export async function get(id: string): Promise<Project> {
  * @param status
  * @returns
  */
-export async function getAll(status: 'Preparing' | 'Development' | 'Finished'): Promise<Project[]> {
+export async function getAll(
+	status?: 'Preparing' | 'Development' | 'Finished'
+): Promise<Project[]> {
 	const res = await trpc.project.getAll.query({ status });
 
 	if (!res) {
@@ -44,10 +47,23 @@ export async function getAll(status: 'Preparing' | 'Development' | 'Finished'): 
  * @returns
  */
 export async function create(project: Project): Promise<Project> {
+	// when unintentionally the creator id was not passed chose the it from the super admin
+	// a safety check that the apps continues to run
+	let creatorId: string = '';
+
+	if (project.creator.id === '') {
+		const superAdmins = await getSuperAdmin('SuperAdmin');
+
+		creatorId = superAdmins[0].id;
+		console.log(creatorId);
+	} else {
+		creatorId = project.creator.id;
+	}
+
 	const res = await trpc.project.create.mutate({
 		name: project.name,
 		description: project.description,
-		creatorID: project.creator.id
+		creatorID: creatorId
 	});
 
 	if (!res) {
