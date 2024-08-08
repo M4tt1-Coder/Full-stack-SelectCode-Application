@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-// TODO - Try out new local storage of the DOM to store the logged in user id somehow
+// TODO - Try out new session storage of the DOM to store the logged in user id somehow
 
 /**
  *  Stores the current logged in user id to make available to trough the whole application

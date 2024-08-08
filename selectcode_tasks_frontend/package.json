@@ -33,7 +33,7 @@
 		"tslib": "^2.6.3",
 		"typescript": "^5.5.4",
 		"typescript-eslint": "8.0.0-alpha.51",
-		"vite": "^5.3.5",
+		"vite": "^5.4.0",
 		"vitest": "^1.6.0"
 	},
 	"type": "module",
@@ -44,7 +44,7 @@
 		"autoprefixer": "^10.4.20",
 		"crypto-js": "^4.2.0",
 		"postcss": "^8.4.41",
-		"tailwindcss": "^3.4.7",
+		"tailwindcss": "^3.4.8",
 		"trpc-sveltekit": "^3.6.2"
 	}
 }

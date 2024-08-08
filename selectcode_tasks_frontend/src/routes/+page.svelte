@@ -34,6 +34,7 @@
 			// hash the inserted password again to check if the it matches with the users password
 			if (user.email === email && user.password === SHA256(password).toString()) {
 				// set the id of the user
+				// sessionStorage.setItem('session_user_id', user.id);
 				signedUserID.set(user.id);
 				goto('/workspace/user/');
 			}

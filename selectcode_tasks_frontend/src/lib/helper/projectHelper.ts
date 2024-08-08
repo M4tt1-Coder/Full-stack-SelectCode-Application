@@ -47,8 +47,8 @@ export async function getAll(
  * @returns
  */
 export async function create(project: Project): Promise<Project> {
-	// when unintentionally the creator id was not passed chose the it from the super admin
-	// a safety check that the apps continues to run
+	// when unintentionally the creator id was not passed choose the id from the super admin
+	// a safety check that the apps continues running
 	let creatorId: string = '';
 
 	if (project.creator.id === '') {
