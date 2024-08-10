@@ -2,26 +2,46 @@
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { User } from '$lib/types/user';
-	import { signedUserID } from '$lib/stores/signedInUserId';
-	import { getAll, get, _delete, update } from '$lib/helper/userHelper';
+	import { getAll, get, _delete, update, getSignedInUser } from '$lib/helper/userHelper';
 	import { onMount } from 'svelte';
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
+	import { userLogin } from '$lib/stores/signedInUserId';
+	import { canUserUpdateInfo } from '$lib/permissions/restrictedActions';
 
 	onMount(async () => {
+		// get all users for the dashboard
 		users = await getAll();
 		if (users.length === 0) {
+			userLogin.logout();
 			goto('/');
 		}
+		// get signed in user
+		const userFetchResult = await getSignedInUser();
+		loggedInUser = userFetchResult;
 	});
 
+	// permission execution
+	/**
+	 * Represents the current logged in user
+	 */
+	let loggedInUser: User;
+
+	// ____________________
+
 	// get all users
+	/**
+	 * All users that have been registered yet
+	 */
 	let users: User[] = [];
 
-	// TODO - Add permissions for the logged in user to do
-	$: loggedInUserID = $signedUserID;
-	// let loggedInUser: User = await get(loggedInUserID);
+	/**
+	 * Search input for the user to filte after some traits of the user
+	 */
 	let search_string: string = '';
 
+	/**
+	 *
+	 */
 	$: userList = users.filter((user: User) => {
 		if (
 			user.email.includes(search_string) ||
@@ -81,18 +101,35 @@
 
 	/**
 	 * Uses local variables to update a user.
+	 *
+	 * Fulfills certain requirements for updating a user.
+	 *
+	 * Checks which permissions the logged in user has.
 	 */
 	async function updateUser() {
-		if (userID === '') {
+		// Do variable checking and permission enforcement
+		if (userID === '' || !canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)) {
 			return;
 		}
 		// call update endpoint
-		await update(userID, {
-			name: userName,
-			email: userEmail,
-			password: userPassword,
-			role: userRole
-		});
+		// when user is intern / expert but modifys himself he must not can change his role
+		if (
+			userID === loggedInUser.id &&
+			(loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert')
+		) {
+			await update(userID, {
+				name: userName,
+				email: userEmail,
+				password: userPassword
+			});
+		} else {
+			await update(userID, {
+				name: userName,
+				email: userEmail,
+				password: userPassword,
+				role: userRole
+			});
+		}
 		resetModifyPopover();
 		window.location.reload();
 	}
@@ -101,7 +138,7 @@
 	 * Deletes a user with its associated id
 	 */
 	async function deleteUser() {
-		if (userID === '') {
+		if (userID === '' || loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
 			return;
 		}
 		await _delete(userID);
@@ -224,14 +261,20 @@
 				<button
 					on:click={() => updateUser()}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					disabled={!canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)}
+					class="{canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)
+						? 'text-2xl hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3'
+						: 'text-xl py-1 px-2 cursor-not-allowed opacity-50'}  text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Update</button
 				>
 				<!-- delete button -->
 				<button
 					on:click={() => deleteUser()}
+					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'py-1 px-2 text-xl cursor-not-allowed opacity-50'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl '} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button
 				>
 			</div>

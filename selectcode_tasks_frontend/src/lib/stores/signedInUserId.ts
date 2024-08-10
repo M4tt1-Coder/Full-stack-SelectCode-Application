@@ -1,15 +1,41 @@
 import { writable } from 'svelte/store';
-
-// TODO - Try out new session storage of the DOM to store the logged in user id somehow
+import { browser } from '$app/environment';
+// import { get } from 'svelte/store';
 
 /**
- *  Stores the current logged in user id to make available to trough the whole application
  *
- *  !It is just for testing purposes usually you should use cookies / sessions or JWT credentials.
- *
- * Needs to be set to '' again when logging out;
+ * @returns Custom store functions
  */
-export const signedUserID = writable('');
+const LoggedInUserId = () => {
+	const { set, subscribe, update } = writable('');
+
+	return {
+		subscribe,
+		update,
+		// value: () => get(),
+		logout: () => {
+			if (!browser) return;
+			window.sessionStorage.clear();
+			set('');
+		},
+		login: (userId: string) => {
+			if (!browser) return;
+			if (!userId || userId === '') {
+				console.log('Did not set the session user id');
+				return '';
+			}
+			set(userId);
+			sessionStorage.setItem('session_user_id', userId);
+		}
+	};
+};
+
+/**
+ * Uses the session storage of the localhost.
+ *
+ * Store for logging in.
+ */
+export const userLogin = LoggedInUserId();
 
 // https://stackoverflow.com/questions/56488202/how-to-persist-svelte-store
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API

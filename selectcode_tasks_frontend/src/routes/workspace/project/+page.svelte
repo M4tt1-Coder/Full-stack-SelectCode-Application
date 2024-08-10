@@ -2,8 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { getAll, create, update, _delete, get } from '$lib/helper/projectHelper';
 	import { create as task_create, update as updateTask } from '$lib/helper/taskHelper';
-	import { getAll as allUsers } from '$lib/helper/userHelper';
-	import { signedUserID } from '$lib/stores/signedInUserId';
+	import { getAll as allUsers, getSignedInUser } from '$lib/helper/userHelper';
 	import type { Project } from '$lib/types/project';
 	import type { Task } from '$lib/types/task';
 	import type { User } from '$lib/types/user';
@@ -12,6 +11,10 @@
 	import { fade } from 'svelte/transition';
 
 	onMount(async () => {
+		// get logged in user
+		const userFetchResult = await getSignedInUser();
+		loggedInUser = userFetchResult;
+		// get all projects -> return to the index page if something happened
 		projects = await getAll();
 		if (projects.length === 0) {
 			goto('/');
@@ -21,11 +24,17 @@
 	// get all projects
 	let projects: Project[] = [];
 
-	// TODO - Add permissions for the logged in user to do
-	$: loggedInUserID = $signedUserID;
-	// let loggedInUser: User = await get(loggedInUserID);
+	// permissions for the logged in user to do
+	let loggedInUser: User;
+
+	/**
+	 *
+	 */
 	let search_string: string = '';
 
+	/**
+	 *
+	 */
 	$: projectList = projects.filter((project: Project) => {
 		if (
 			project.description.includes(search_string) ||
@@ -56,6 +65,12 @@
 	 * Calls the trpc endpoint.
 	 */
 	async function createProject(): Promise<void> {
+		// right enforcement
+		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+			console.log('You can not create a project');
+			return;
+		}
+		// var checking
 		if (create_projectName === '' || create_projectDescription === '') {
 			return;
 		}
@@ -67,7 +82,7 @@
 			status: 'Preparing',
 			tasks: [],
 			creator: {
-				id: loggedInUserID,
+				id: loggedInUser.id,
 				name: '',
 				password: '',
 				email: '',
@@ -120,7 +135,12 @@
 	 */
 	async function deleteProject(projectId: string): Promise<void> {
 		// check if the project not null
-		if (!projectId || projectId === '') {
+		if (
+			!projectId ||
+			projectId === '' ||
+			loggedInUser.role === 'Intern' ||
+			loggedInUser.role === 'Expert'
+		) {
 			return;
 		}
 		// delete the project
@@ -136,6 +156,12 @@
 	 *  trpc client server trpc endpoint.
 	 */
 	async function modifyProject(): Promise<void> {
+		// has the user the right to change the project
+		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+			console.log('User did not have the right to change the project');
+			return;
+		}
+
 		// check variables
 		if (!modify_projectID) {
 			console.log('No project id specified');
@@ -221,6 +247,11 @@
 	 * Takes usage of the local variables and creates the task.
 	 */
 	async function createTask(): Promise<void> {
+		// permission check
+		if (loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
+			console.log('Your are not allowed to create a task on a project');
+			return;
+		}
 		// vars checking
 		if (!create_taskName || !create_taskDescription || !create_taskAssignees) {
 			throw new Error(
@@ -300,26 +331,11 @@
 			}
 		});
 	}
-
-	/**
-	 * Removes a user from the assignees list.
-	 *
-	 * @param userId - User ID of the user to be removed
-	 */
-	// function removeUserFromAssignees(userId: string) {
-	// 	if (userId === '') {
-	// 		return;
-	// 	}
-
-	// 	// remove from list
-	// 	create_taskAssignees = create_taskAssignees.filter((user) => {
-	// 		// add all user where the id is different from the user that should be deleted
-	// 		if (user.id !== userId) {
-	// 			return user;
-	// 		}
-	// 	});
-	// }
 </script>
+
+<svelte:head>
+	<title>Project</title>
+</svelte:head>
 
 <!-- project creation popver -->
 {#if showCreateProjectPopover}
@@ -395,9 +411,12 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- create project button -->
 				<button
+					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 					on:click={() => createProject()}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'opacity-50 text-xl cursor-not-allowed py-1 px-2'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'}  text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Create</button
 				>
 			</div>
@@ -524,8 +543,11 @@
 				<div class="w-full p-3 flex flex-col items-center justify-center gap-3">
 					<div class="w-full flex items-center justify-center">
 						<button
+							disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 							type="button"
-							class="rounded-xl ring-2 ring-black px-2 py-1 font-medium text-lg transition-all duration-500 hover:text-white hover:bg-black"
+							class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+								? 'opacity-50 cursor-not-allowed'
+								: 'hover:text-white hover:bg-black'} rounded-xl ring-2 ring-black px-2 py-1 font-medium text-lg transition-all duration-500"
 							on:click={OpenCreateTaskPopover}>Create Task</button
 						>
 					</div>
@@ -541,16 +563,22 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- update button -->
 				<button
+					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 					on:click={modifyProject}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Update</button
 				>
 				<!-- delete button -->
 				<button
+					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 					on:click={() => deleteProject(modify_projectID)}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button
 				>
 			</div>
@@ -639,7 +667,10 @@
 						class="w-full p-3 ring-1 ring-black flex flex-col items-center justify-center rounded-lg overflow-scroll"
 					>
 						{#each reactive_create_taskPossibleAssignees as assignee}
-							<div class="w-full flex items-center justify-between">
+							<div
+								transition:fade={{ duration: 700 }}
+								class="w-full flex items-center justify-between"
+							>
 								<!-- name of the user -->
 								<p class="text-lg font-medium text-left">{assignee.name}</p>
 								<!-- added / not added -->
@@ -652,7 +683,9 @@
 						{/each}
 					</div>
 				{:else}
-					<p class="w-full text-center font-medium text-base">- You have assigned all users -</p>
+					<p transition:fade={{ duration: 700 }} class="w-full text-center font-medium text-base">
+						- You have assigned all users -
+					</p>
 				{/if}
 			</div>
 			<!-- buttons -->
@@ -660,8 +693,11 @@
 				<!-- create project button -->
 				<button
 					on:click={() => createTask()}
+					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Create</button
 				>
 			</div>

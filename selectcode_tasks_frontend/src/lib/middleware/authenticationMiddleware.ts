@@ -2,8 +2,6 @@
 import { goto } from '$app/navigation';
 import { get } from '../helper/userHelper';
 
-// TODO - Maybe invoke the middleware on every protected route / page
-
 /**
  *  Protects all routes where the user has to be logged in.
  *
@@ -12,7 +10,7 @@ import { get } from '../helper/userHelper';
  * @param userID - user session ID stored in the 'signedInUserId' store
  */
 export async function routesProtected(userID: string): Promise<void> {
-	if (userID === '') {
+	if (userID === '' || !userID || userID === null) {
 		goto('/');
 	}
 

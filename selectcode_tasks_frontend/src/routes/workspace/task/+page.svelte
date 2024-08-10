@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getAll, update, _delete, get } from '$lib/helper/taskHelper';
-	import { getAll as allUsers } from '$lib/helper/userHelper';
+	import { getAll as allUsers, getSignedInUser } from '$lib/helper/userHelper';
 	import type { Task } from '$lib/types/task';
 	import type { User } from '$lib/types/user';
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
+	import { canUserModifyTaskStatus } from '$lib/permissions/restrictedActions';
 
 	onMount(async () => {
+		// get logged in user
+		const userFetchResult = await getSignedInUser();
+		loggedInUser = userFetchResult;
+		// loading all task
 		tasks = await getAll();
 		if (tasks.length === 0) {
 			goto('/workspace/project');
 		}
 	});
+
+	// signed in user
+	let loggedInUser: User;
 
 	// Search functionality
 	let tasks: Task[] = [];
@@ -106,15 +114,39 @@
 	}
 
 	// representative variables for properties to be updated
+	/**
+	 *
+	 */
 	let modify_taskName: string = '';
+	/**
+	 *
+	 */
 	let modify_taskDescription: string = '';
+	/**
+	 *
+	 */
 	let modify_taskStatus: Status = 'Preparing';
+	/**
+	 *
+	 */
 	let modify_taskID: string = '';
+	/**
+	 *
+	 */
 	let modify_taskAddedAssignees: User[] = [];
+	/**
+	 *
+	 */
 	$: reactive_addedAssignees = modify_taskAddedAssignees;
 
 	// users that can be added to one task
+	/**
+	 *
+	 */
 	let modify_taskOpenAssignees: User[] = [];
+	/**
+	 *
+	 */
 	$: reactive_openAssignees = modify_taskOpenAssignees;
 
 	type Status = 'Preparing' | 'Development' | 'Finished';
@@ -125,6 +157,11 @@
 	 * ! Fails when there still relations whit other object in the database.
 	 */
 	async function deleteTask(): Promise<void> {
+		// permission check
+		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+			console.log('Unable to delete task due to permission denied');
+			return;
+		}
 		// check the id
 		if (modify_taskID === '') {
 			console.log('Could not find a task id');
@@ -145,17 +182,29 @@
 	 */
 	async function updateTask(): Promise<void> {
 		// id is required -> check
-		if (modify_taskID === '') {
-			console.log('Could not find a task id');
+		if (
+			modify_taskID === '' ||
+			!canUserModifyTaskStatus(loggedInUser.role, loggedInUser.id, modify_taskAddedAssignees)
+		) {
+			console.log('Could not find a task id or have no right to update the task');
 			return;
 		}
+		// user can update the task's status even as intern / expert when he or she is assigned to the task
 		// update task
-		await update(modify_taskID, {
-			name: modify_taskName,
-			description: modify_taskDescription,
-			status: modify_taskStatus,
-			assignees: modify_taskAddedAssignees
-		});
+		if (loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
+			await update(modify_taskID, {
+				status: modify_taskStatus,
+				assignees: modify_taskAddedAssignees
+			});
+		} else {
+			await update(modify_taskID, {
+				name: modify_taskName,
+				description: modify_taskDescription,
+				status: modify_taskStatus,
+				assignees: modify_taskAddedAssignees
+			});
+		}
+
 		// close popup
 		resetTaskModifyPopup();
 	}
@@ -198,6 +247,10 @@
 		reactive_openAssignees = modify_taskOpenAssignees;
 	}
 </script>
+
+<svelte:head>
+	<title>Task</title>
+</svelte:head>
 
 <!-- modify popover for a task -->
 {#if showTaskModifyPopup}
@@ -307,8 +360,11 @@
 								<p class="text-left font-medium text-lg">{assignee.name}</p>
 								<!-- button -->
 								<button
+									disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
 									type="button"
-									class="text-base font-medium text-red-700 rounded-lg p-1 transition-all duration-500 hover:text-white hover:bg-red-700"
+									class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+										? 'cursor-not-allowed opacity-50'
+										: 'hover:text-white hover:bg-red-700'} text-base font-medium text-red-700 rounded-lg p-1 transition-all duration-500"
 									on:click={() => removeUserfromTask(assignee.id)}>Remove</button
 								>
 							</div>
@@ -325,8 +381,11 @@
 								<p class="text-left font-medium text-lg">{assignee.name}</p>
 								<!-- button -->
 								<button
+									disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
 									type="button"
-									class="text-base font-medium text-green-700 rounded-lg p-1 transition-all duration-500 hover:text-white hover:bg-green-700"
+									class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+										? 'cursor-not-allowed opacity-50'
+										: 'hover:text-white hover:bg-green-700'} text-base font-medium text-green-700 rounded-lg p-1 transition-all duration-500"
 									on:click={() => addUserToTask(assignee.id)}>Add</button
 								>
 							</div>
@@ -338,16 +397,30 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- update button -->
 				<button
+					disabled={!canUserModifyTaskStatus(
+						loggedInUser.role,
+						loggedInUser.id,
+						modify_taskAddedAssignees
+					)}
 					on:click={updateTask}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{canUserModifyTaskStatus(
+						loggedInUser.role,
+						loggedInUser.id,
+						modify_taskAddedAssignees
+					)
+						? 'text-2xl hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3'
+						: 'text-xl py-1 px-2 cursor-not-allowed opacity-50'} text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Update</button
 				>
 				<!-- delete button -->
 				<button
+					disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
 					on:click={deleteTask}
 					type="button"
-					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
+					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
+						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button
 				>
 			</div>

@@ -1,5 +1,34 @@
 import { trpc } from '$lib/trpc/trpc';
 import type { User } from '$lib/types/user';
+import { goto } from '$app/navigation';
+
+/**
+ *	Fetches user that is currently logged in for the pages to handle
+ *	permissions for what he is allowed to access.
+ *
+ * 	Fails when the user is not logged in, no user session id has been set or
+ *	no user has been found.
+ *
+ * @returns - User object of the user
+ */
+export async function getSignedInUser(): Promise<User> {
+	// get session id from sessionStorage
+	const userId = window.sessionStorage.getItem('session_user_id');
+	// check if id is valid
+	if (userId === null || userId === '') {
+		goto('/');
+		throw new Error('User session Id is invalid!');
+	}
+	// try to get the user of the id
+	const user: User = await trpc.user.get.query({ id: userId });
+	// check user
+	if (!user || !user.id) {
+		goto('/');
+		throw new Error(`Could not fetch a user with id: ${userId}`);
+	}
+	// return user
+	return user;
+}
 
 // get
 /**

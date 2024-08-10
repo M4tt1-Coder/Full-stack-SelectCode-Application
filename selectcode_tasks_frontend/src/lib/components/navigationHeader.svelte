@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { signedUserID } from '$lib/stores/signedInUserId';
+	import { userLogin } from '$lib/stores/signedInUserId';
 	import { goto } from '$app/navigation';
 	import { UserOutline, ClipboardCheckOutline, BookOpenOutline } from 'flowbite-svelte-icons';
 	import { fade } from 'svelte/transition';
@@ -71,7 +71,7 @@
 				type="button"
 				class="text-2xl text-white font-medium transition-all duration-700 ease-in-out hover:bg-white hover:text-black rounded-lg p-2"
 				on:click={() => {
-					signedUserID.set('');
+					userLogin.logout();
 					goto('/');
 				}}>Log Out</button
 			>

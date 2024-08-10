@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { isSignUpPopupOpen } from '$lib/stores/isSignUpPopoverOpen';
-	import { signedUserID } from '$lib/stores/signedInUserId';
+	import { userLogin } from '$lib/stores/signedInUserId';
 	import { CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { create, getAll } from '$lib/helper/userHelper';
 	import type { User } from '$lib/types/user';
@@ -34,8 +34,7 @@
 			// hash the inserted password again to check if the it matches with the users password
 			if (user.email === email && user.password === SHA256(password).toString()) {
 				// set the id of the user
-				// sessionStorage.setItem('session_user_id', user.id);
-				signedUserID.set(user.id);
+				userLogin.login(user.id);
 				goto('/workspace/user/');
 			}
 		});
