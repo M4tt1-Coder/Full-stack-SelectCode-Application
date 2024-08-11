@@ -11,6 +11,7 @@ import {
   Column,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 
 /**
@@ -29,6 +30,7 @@ export class User {
   @Column()
   password: string;
 
+  @Index({ unique: true })
   @Column()
   email: string;
 

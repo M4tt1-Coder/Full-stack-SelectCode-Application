@@ -113,4 +113,20 @@ export class UsersService {
     await this.userRepo.delete(id);
     return User_ConvertEntityToDTO(user);
   }
+
+  /**
+   * Gets the number of stored users and determines if a user is the first one to be created.
+   *
+   * @returns Whether the user is the first person that was created or not
+   */
+  async firstCreatedUser(): Promise<boolean> {
+    //get all user
+    const users = await this.findAll();
+
+    if (users.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

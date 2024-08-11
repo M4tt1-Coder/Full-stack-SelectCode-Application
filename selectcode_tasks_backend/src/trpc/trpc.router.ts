@@ -5,7 +5,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError } from '@trpc/server';
 import { UsersService } from 'src/users/users.service';
 import { v4 } from 'uuid';
-import { defaultRole, isMember, stringToRole } from 'lib/enums/roles';
+import { defaultRole, isMember, Role, stringToRole } from 'lib/enums/roles';
 import { SHA256 } from 'crypto-js';
 import { ProjectsService } from 'src/projects/projects.service';
 import { User_ConvertDTOtoEntity } from 'src/users/user.entity';
@@ -109,6 +109,15 @@ export class TrpcRouter {
             });
           }
 
+          // determine role
+          let role: Role;
+
+          if (await this.users.firstCreatedUser()) {
+            role = 'SuperAdmin';
+          } else {
+            role = defaultRole();
+          }
+
           // hashing the password
           // create a new user
           const user = await this.users.create({
@@ -116,7 +125,7 @@ export class TrpcRouter {
             email,
             password: SHA256(password).toString(),
             id: v4(), // uuid version 4
-            role: defaultRole(),
+            role,
             lastTimeOnline: new Date(),
             projects: [],
           });
@@ -511,6 +520,9 @@ export class TrpcRouter {
     }),
   });
 
+  // testing trpc procedure caller
+  // caller = this.trpc.trpc.createCallerFactory(this.appRouter);
+
   /**
    * Adds the trpc server to the nestjs server
    *
@@ -525,6 +537,8 @@ export class TrpcRouter {
     );
   }
 }
+
+// export const caller = TrpcRouter[`caller`];
 
 /**
  * Instance of the tRPC Express middleware and routing types

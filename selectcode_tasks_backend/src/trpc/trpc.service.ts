@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { initTRPC } from '@trpc/server';
 
-// TODO - Add a context -> for access authentication maybe
-
 /**
  * _ Provider _
  *
