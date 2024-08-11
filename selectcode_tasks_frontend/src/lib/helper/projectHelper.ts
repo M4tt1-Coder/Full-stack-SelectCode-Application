@@ -4,9 +4,12 @@ import { getAll as getSuperAdmin } from './userHelper';
 
 // get
 /**
+ *	Gets the project from the tRPC server by passing the project id as parameter.
  *
- * @param id
- * @returns
+ * 	Destructures the response object into a project type.
+ *
+ * @param id ID of the project
+ * @returns Fetched project from the server
  */
 export async function get(id: string): Promise<Project> {
 	const res = await trpc.project.get.query({ id });
@@ -22,9 +25,12 @@ export async function get(id: string): Promise<Project> {
 
 // getAll
 /**
+ *	Loads all projects from the backend.
  *
- * @param status
- * @returns
+ * 	Potentially filters the result by their current status.
+ *
+ * @param status Depending on what the user wants to filter.
+ * @returns list of projects -> all or with one status
  */
 export async function getAll(
 	status?: 'Preparing' | 'Development' | 'Finished'
@@ -42,9 +48,14 @@ export async function getAll(
 
 // create
 /**
+ *	Takes in data that can be passed freely by the user.
  *
- * @param project
- * @returns
+ * 	Does some basic default data validation and generation.
+ *
+ * 	First creates and then returns the created project.
+ *
+ * @param project Project object with all necessary infos
+ * @returns Created project
  */
 export async function create(project: Project): Promise<Project> {
 	// when unintentionally the creator id was not passed choose the id from the super admin
@@ -77,9 +88,12 @@ export async function create(project: Project): Promise<Project> {
 
 // delete
 /**
+ *	Like the 'get' function, it uses the project id to manipulate a project.
  *
- * @param id
- * @returns
+ * 	In the end it returns the data of the removed project for possible deletion evidence.
+ *
+ * @param id The project id
+ * @returns Data of the removed project
  */
 export async function _delete(id: string): Promise<Project> {
 	const res = await trpc.project.delete.mutate({ id });
@@ -95,10 +109,15 @@ export async function _delete(id: string): Promise<Project> {
 
 // update
 /**
+ * Takes in the project id and a optional project object.
  *
- * @param id
- * @param project
- * @returns
+ * Fails if the project id is null or belongs to no project.
+ *
+ * Updates the project.
+ *
+ * @param id The project id
+ * @param project Partial project object
+ * @returns The updated project
  */
 export async function update(id: string, project: Partial<Project>): Promise<Project> {
 	const res = await trpc.project.update.mutate({

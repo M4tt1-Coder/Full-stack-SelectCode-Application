@@ -8,6 +8,7 @@
 	import { userLogin } from '$lib/stores/signedInUserId';
 	import { canUserUpdateInfo } from '$lib/permissions/restrictedActions';
 
+	// Loading all data to display user content
 	onMount(async () => {
 		// get all users for the dashboard
 		users = await getAll();
@@ -40,7 +41,7 @@
 	let search_string: string = '';
 
 	/**
-	 *
+	 *	Filtered list of all users
 	 */
 	$: userList = users.filter((user: User) => {
 		if (

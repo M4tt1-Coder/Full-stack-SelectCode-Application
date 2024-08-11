@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit';
+// import { caller } from '../../selectcode_tasks_backend/src/trpc/trpc.router';
 // import { get } from '$lib/helper/userHelper';
 // import { browser } from '$app/environment';
 
@@ -17,6 +18,8 @@ export const handle: Handle = async ({ resolve, event }) => {
 	if (!allowedRoutes.includes(event.url.pathname)) {
 		redirect(307, '/');
 	}
+
+	// const user = await caller;
 
 	// can just pass when user id is valid
 	// if (event.url.pathname.includes('/workspace')) {

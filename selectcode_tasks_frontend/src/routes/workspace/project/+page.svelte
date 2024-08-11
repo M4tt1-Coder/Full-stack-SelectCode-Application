@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	// Loading all data before getting to mount all page elements
 	onMount(async () => {
 		// get logged in user
 		const userFetchResult = await getSignedInUser();
@@ -28,12 +29,15 @@
 	let loggedInUser: User;
 
 	/**
-	 *
+	 *	User entered a string like `Matthis` to search for names, email, ...
 	 */
 	let search_string: string = '';
 
 	/**
+	 *	Updates the shown projects with filtering over all projects & searching for subStrings in properties
+	 *	of the project.
 	 *
+	 * 	Searches in `description`, `name`, `status` and `creator.id`
 	 */
 	$: projectList = projects.filter((project: Project) => {
 		if (

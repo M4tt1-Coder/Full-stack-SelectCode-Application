@@ -9,6 +9,7 @@
 	import { fade, slide } from 'svelte/transition';
 	import { canUserModifyTaskStatus } from '$lib/permissions/restrictedActions';
 
+	// loading all needed resources to render the task dashboard.
 	onMount(async () => {
 		// get logged in user
 		const userFetchResult = await getSignedInUser();
@@ -21,15 +22,28 @@
 	});
 
 	// signed in user
+	/**
+	 * Logged in user
+	 */
 	let loggedInUser: User;
 
 	// Search functionality
 	let tasks: Task[] = [];
 
+	/**
+	 * Is potential subString of some properties of a task for searching
+	 */
 	let search_string: string = '';
 
+	/**
+	 * Uses `search_string` to filter the list of tasks that is shown.
+	 *
+	 * Returns all tasks if `search_string` is empty.
+	 */
 	$: taskList = tasks.filter((task: Task) => {
+		// when there are no tasks -> don't continue
 		if (task.assignees.length > 0) {
+			// if some assignee contains the 'search_string'
 			task.assignees.forEach((assignee: User) => {
 				if (assignee.name.includes(search_string) || assignee.role.includes(search_string)) {
 					return task;
@@ -73,8 +87,11 @@
 	}
 
 	/**
+	 *	Checks if the task id is okay.
 	 *
-	 * @param taskId
+	 *	Loads the data of the current task into local variables with `modify_` at the beginning.
+	 *
+	 * @param taskId - the task id
 	 */
 	async function openTaskDetails(taskId: string): Promise<void> {
 		// check id
@@ -115,37 +132,37 @@
 
 	// representative variables for properties to be updated
 	/**
-	 *
+	 *	Name of the task
 	 */
 	let modify_taskName: string = '';
 	/**
-	 *
+	 *	Description of the task
 	 */
 	let modify_taskDescription: string = '';
 	/**
-	 *
+	 * Status of the task
 	 */
 	let modify_taskStatus: Status = 'Preparing';
 	/**
-	 *
+	 * Id of the task
 	 */
 	let modify_taskID: string = '';
 	/**
-	 *
+	 * Assigned user to the task
 	 */
 	let modify_taskAddedAssignees: User[] = [];
 	/**
-	 *
+	 *	Reactive list of assignees
 	 */
 	$: reactive_addedAssignees = modify_taskAddedAssignees;
 
 	// users that can be added to one task
 	/**
-	 *
+	 *	List of `User`s that can be added to the task
 	 */
 	let modify_taskOpenAssignees: User[] = [];
 	/**
-	 *
+	 *	Reactive list of `User`s that can be added to the task
 	 */
 	$: reactive_openAssignees = modify_taskOpenAssignees;
 

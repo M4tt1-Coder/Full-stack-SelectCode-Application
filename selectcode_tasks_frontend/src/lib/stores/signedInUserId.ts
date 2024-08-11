@@ -3,8 +3,9 @@ import { browser } from '$app/environment';
 // import { get } from 'svelte/store';
 
 /**
+ *	Store to communicate with the sessionStorage and store a user id when he / she is logged in.
  *
- * @returns Custom store functions
+ * @returns Custom store functions to login and logout
  */
 const LoggedInUserId = () => {
 	const { set, subscribe, update } = writable('');
@@ -22,7 +23,7 @@ const LoggedInUserId = () => {
 			if (!browser) return;
 			if (!userId || userId === '') {
 				console.log('Did not set the session user id');
-				return '';
+				return;
 			}
 			set(userId);
 			sessionStorage.setItem('session_user_id', userId);

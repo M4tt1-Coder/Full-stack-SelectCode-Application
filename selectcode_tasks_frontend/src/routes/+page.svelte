@@ -19,6 +19,7 @@
 		// destructure the crypto-js package to use it properly
 		const { SHA256 } = pkg;
 
+		// variable validation
 		if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
 			invalidInput = true;
 			return;

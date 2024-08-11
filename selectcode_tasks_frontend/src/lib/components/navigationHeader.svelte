@@ -4,7 +4,14 @@
 	import { UserOutline, ClipboardCheckOutline, BookOpenOutline } from 'flowbite-svelte-icons';
 	import { fade } from 'svelte/transition';
 
+	/**
+	 * Representive type for the all pages.
+	 */
 	type pages = 'User' | 'Task' | 'Project';
+
+	/**
+	 * Prop to define on which page we are on.
+	 */
 	export let page: pages = 'User';
 </script>
 
@@ -71,6 +78,7 @@
 				type="button"
 				class="text-2xl text-white font-medium transition-all duration-700 ease-in-out hover:bg-white hover:text-black rounded-lg p-2"
 				on:click={() => {
+					// clears session storage
 					userLogin.logout();
 					goto('/');
 				}}>Log Out</button

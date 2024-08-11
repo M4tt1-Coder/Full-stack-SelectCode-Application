@@ -10,6 +10,7 @@ import { get } from '../helper/userHelper';
  * @param userID - user session ID stored in the 'signedInUserId' store
  */
 export async function routesProtected(userID: string): Promise<void> {
+	// return to the index page
 	if (userID === '' || !userID || userID === null) {
 		goto('/');
 	}
@@ -21,6 +22,7 @@ export async function routesProtected(userID: string): Promise<void> {
 		goto('/');
 	}
 
+	// make sure the user was not an empty object and exists
 	if (
 		user.password === '' ||
 		user.id === '' ||

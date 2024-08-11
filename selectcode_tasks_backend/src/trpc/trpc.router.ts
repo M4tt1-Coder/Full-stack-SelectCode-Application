@@ -520,6 +520,9 @@ export class TrpcRouter {
     }),
   });
 
+  // testing trpc procedure caller
+  // caller = this.trpc.trpc.createCallerFactory(this.appRouter);
+
   /**
    * Adds the trpc server to the nestjs server
    *
@@ -534,6 +537,8 @@ export class TrpcRouter {
     );
   }
 }
+
+// export const caller = TrpcRouter[`caller`];
 
 /**
  * Instance of the tRPC Express middleware and routing types

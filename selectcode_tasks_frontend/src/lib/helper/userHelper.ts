@@ -32,9 +32,12 @@ export async function getSignedInUser(): Promise<User> {
 
 // get
 /**
+ *	Takes in the user id and fetches the corresponding user.
  *
- * @param id
- * @returns
+ *	Fails if the user id does not exist or leads to no user.
+ *
+ * @param id The user id
+ * @returns	Fetched user
  */
 export async function get(id: string): Promise<User> {
 	const res = await trpc.user.get.query({ id });
@@ -50,9 +53,12 @@ export async function get(id: string): Promise<User> {
 
 // getAll
 /**
+ *	Tasks and projects are filtered by their status but the user is by their role.
  *
- * @param role
- * @returns
+ *	Potentially gets an empty list of users.
+ *
+ * @param role Optional filter parameter
+ * @returns List of ( filtered ) users
  */
 export async function getAll(role?: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin'): Promise<User[]> {
 	const res = await trpc.user.getAll.query({ role });
@@ -68,9 +74,12 @@ export async function getAll(role?: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin'
 
 // delete
 /**
+ *	Uses the user id to delete the user.
  *
- * @param id
- * @returns
+ *	Fails when the user id is invalid.
+ *
+ * @param id The user id
+ * @returns Last time the user that was deleted
  */
 export async function _delete(id: string): Promise<User> {
 	const res = await trpc.user.delete.mutate({ id });
@@ -86,9 +95,12 @@ export async function _delete(id: string): Promise<User> {
 
 // create
 /**
+ *	The passed user instance is provided to the create procedure on the backend.
  *
- * @param user
- * @returns
+ *	The new user is returned from the backend.
+ *
+ * @param user the user instance with new data
+ * @returns the created user instance
  */
 export async function create(user: User): Promise<User> {
 	const res = await trpc.user.create.mutate({
@@ -108,10 +120,15 @@ export async function create(user: User): Promise<User> {
 
 // update
 /**
+ *	Modifies a user in the database.
  *
- * @param id
- * @param user
- * @returns
+ * 	Get the user with its given ID.
+ *
+ *	Applies the optional parameters to the user.
+ *
+ * @param id Identifier of the user
+ * @param user Dataset of possible optional user parameters
+ * @returns Updated user
  */
 export async function update(id: string, user: Partial<User>): Promise<User> {
 	const res = await trpc.user.update.mutate({
