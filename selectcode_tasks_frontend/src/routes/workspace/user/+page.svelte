@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { userLogin } from '$lib/stores/signedInUserId';
-	import { canUserUpdateInfo } from '$lib/permissions/restrictedActions';
+	import { canUserUpdateInfo, isUserAnInternOrExpert } from '$lib/permissions/restrictedActions';
 
 	// Loading all data to display user content
 	onMount(async () => {
@@ -114,10 +114,7 @@
 		}
 		// call update endpoint
 		// when user is intern / expert but modifys himself he must not can change his role
-		if (
-			userID === loggedInUser.id &&
-			(loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert')
-		) {
+		if (userID === loggedInUser.id && isUserAnInternOrExpert(loggedInUser.role)) {
 			await update(userID, {
 				name: userName,
 				email: userEmail,
@@ -139,7 +136,7 @@
 	 * Deletes a user with its associated id
 	 */
 	async function deleteUser() {
-		if (userID === '' || loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
+		if (userID === '' || isUserAnInternOrExpert(loggedInUser.role)) {
 			return;
 		}
 		await _delete(userID);
@@ -271,9 +268,9 @@
 				<!-- delete button -->
 				<button
 					on:click={() => deleteUser()}
-					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
+					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					type="button"
-					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'py-1 px-2 text-xl cursor-not-allowed opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl '} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button

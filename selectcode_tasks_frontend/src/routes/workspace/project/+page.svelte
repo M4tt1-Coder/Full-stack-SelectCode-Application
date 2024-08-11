@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isUserAnInternOrExpert } from '$lib/permissions/restrictedActions';
 	import { goto } from '$app/navigation';
 	import { getAll, create, update, _delete, get } from '$lib/helper/projectHelper';
 	import { create as task_create, update as updateTask } from '$lib/helper/taskHelper';
@@ -70,7 +71,7 @@
 	 */
 	async function createProject(): Promise<void> {
 		// right enforcement
-		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+		if (isUserAnInternOrExpert(loggedInUser.role)) {
 			console.log('You can not create a project');
 			return;
 		}
@@ -161,7 +162,7 @@
 	 */
 	async function modifyProject(): Promise<void> {
 		// has the user the right to change the project
-		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+		if (isUserAnInternOrExpert(loggedInUser.role)) {
 			console.log('User did not have the right to change the project');
 			return;
 		}
@@ -252,7 +253,7 @@
 	 */
 	async function createTask(): Promise<void> {
 		// permission check
-		if (loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
+		if (isUserAnInternOrExpert(loggedInUser.role)) {
 			console.log('Your are not allowed to create a task on a project');
 			return;
 		}
@@ -567,20 +568,20 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- update button -->
 				<button
-					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
+					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					on:click={modifyProject}
 					type="button"
-					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Update</button
 				>
 				<!-- delete button -->
 				<button
-					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
+					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					on:click={() => deleteProject(modify_projectID)}
 					type="button"
-					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button
@@ -697,9 +698,9 @@
 				<!-- create project button -->
 				<button
 					on:click={() => createTask()}
-					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
+					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					type="button"
-					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Create</button
