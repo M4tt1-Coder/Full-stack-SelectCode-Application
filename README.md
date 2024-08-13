@@ -151,7 +151,7 @@ This will install all dependencies!
 
 #### Testing
 
-If you want to run all implemented test, run this command in a terminal at the route directory:
+If you want to run all implemented test, run this command in a terminal in the folder you want to run the tests:
 
 ```bash
   pnpm test
