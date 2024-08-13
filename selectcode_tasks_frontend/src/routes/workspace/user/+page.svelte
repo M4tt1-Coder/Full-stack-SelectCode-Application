@@ -6,7 +6,11 @@
 	import { onMount } from 'svelte';
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { userLogin } from '$lib/stores/signedInUserId';
-	import { canUserUpdateInfo, isUserAnInternOrExpert } from '$lib/permissions/restrictedActions';
+	import {
+		canUserDeleteUser,
+		canUserUpdateInfo,
+		isUserAnInternOrExpert
+	} from '$lib/permissions/restrictedActions';
 
 	// Loading all data to display user content
 	onMount(async () => {
@@ -157,7 +161,11 @@
 	 * Deletes a user with its associated id
 	 */
 	async function deleteUser() {
-		if (userID === '' || isUserAnInternOrExpert(loggedInUser.role)) {
+		if (
+			userID === '' ||
+			isUserAnInternOrExpert(loggedInUser.role) ||
+			!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)
+		) {
 			return;
 		}
 		await _delete(userID);
@@ -299,9 +307,11 @@
 				<!-- delete button -->
 				<button
 					on:click={() => deleteUser()}
-					disabled={isUserAnInternOrExpert(loggedInUser.role)}
+					disabled={isUserAnInternOrExpert(loggedInUser.role) ||
+						!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)}
 					type="button"
-					class="{isUserAnInternOrExpert(loggedInUser.role)
+					class="{isUserAnInternOrExpert(loggedInUser.role) ||
+					!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)
 						? 'py-1 px-2 text-xl cursor-not-allowed opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl '} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button

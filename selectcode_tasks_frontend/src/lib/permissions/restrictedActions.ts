@@ -3,6 +3,35 @@
 import type { User } from '$lib/types/user';
 
 /**
+ *	Mainly to make sure that normal admins can't delete another admin, himself or
+ * 	a super admin.
+ *
+ * @param loggedInUserRole - Role of the user that is logged in
+ * @param toBeMutatedUserRole - Role of the user that is to be deleted
+ * @returns True if the user can delete another user
+ */
+export function canUserDeleteUser(
+	loggedInUserRole: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin',
+	toBeMutatedUserRole: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin'
+): boolean {
+	// super admin can do everything
+	if (loggedInUserRole === 'SuperAdmin') {
+		return true;
+	}
+
+	// when logged in user is a admin
+	if (loggedInUserRole === 'Admin') {
+		if (toBeMutatedUserRole === 'SuperAdmin' || toBeMutatedUserRole === 'Admin') {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  *	A simple utility function for checking if a user is a intern or expert.
  *
  * @param userRole - Role of the user
