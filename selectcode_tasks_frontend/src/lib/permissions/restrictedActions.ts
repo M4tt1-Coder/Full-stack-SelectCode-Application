@@ -30,12 +30,22 @@ export function isUserAnInternOrExpert(
 export function canUserUpdateInfo(
 	role: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin',
 	toBeMutatedUserID: string,
+	toBeMutatedUserRole: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin',
 	loggedInUserID: string
 ): boolean {
-	// when user is admin -> already true
-	if (role === 'Admin' || role === 'SuperAdmin') {
+	// when user is superadmin -> already true
+	if (role === 'SuperAdmin') {
 		return true;
 	}
+	// when an admin wants to update a superadmin
+	if (role === 'Admin') {
+		if (toBeMutatedUserRole === 'SuperAdmin') {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	// if the user mutates his account -> return true
 	if (toBeMutatedUserID === loggedInUserID) {
 		return true;
