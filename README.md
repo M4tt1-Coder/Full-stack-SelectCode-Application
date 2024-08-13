@@ -157,7 +157,7 @@ If you want to run all implemented test, run this command in a terminal in the f
   pnpm test
 ```
 
-This will run [vitest](https://vitest.dev/) and runs all test cases that can be found in the repository.
+This will run [vitest](https://vitest.dev/) or [jest](https://jestjs.io/) and handles all test cases that can be found in the repository.
 
 If you look in the `package.json` file, you will find a scripts section with commands, there you are able to find the command **_test_**.
 
