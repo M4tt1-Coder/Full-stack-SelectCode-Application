@@ -6,7 +6,11 @@
 	import { onMount } from 'svelte';
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { userLogin } from '$lib/stores/signedInUserId';
-	import { canUserUpdateInfo, isUserAnInternOrExpert } from '$lib/permissions/restrictedActions';
+	import {
+		canUserDeleteUser,
+		canUserUpdateInfo,
+		isUserAnInternOrExpert
+	} from '$lib/permissions/restrictedActions';
 
 	// Loading all data to display user content
 	onMount(async () => {
@@ -66,6 +70,15 @@
 	let userID: string = '';
 
 	/**
+	 * For permission checking
+	 *
+	 * Stores the role of the user that is open for a mutation
+	 *
+	 * Can't be changed by the user
+	 */
+	let userRoleBeforeMutation: Role = 'Intern';
+
+	/**
 	 * Determines whether user details are shown or closed
 	 */
 	let showModifyPopover: boolean = false;
@@ -80,6 +93,7 @@
 		userPassword = '';
 		userID = '';
 		userRole = 'Intern';
+		userRoleBeforeMutation = 'Intern';
 		// close popover
 		showModifyPopover = false;
 	}
@@ -96,6 +110,7 @@
 		userEmail = user.email;
 		userID = user.id;
 		userRole = user.role;
+		userRoleBeforeMutation = user.role;
 		// open popover
 		showModifyPopover = true;
 	}
@@ -109,12 +124,22 @@
 	 */
 	async function updateUser() {
 		// Do variable checking and permission enforcement
-		if (userID === '' || !canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)) {
+		if (
+			userID === '' ||
+			!canUserUpdateInfo(loggedInUser.role, userID, userRoleBeforeMutation, loggedInUser.id)
+		) {
 			return;
 		}
 		// call update endpoint
 		// when user is intern / expert but modifys himself he must not can change his role
 		if (userID === loggedInUser.id && isUserAnInternOrExpert(loggedInUser.role)) {
+			await update(userID, {
+				name: userName,
+				email: userEmail,
+				password: userPassword
+			});
+			// don't let a admin become a superadmin on his / her own
+		} else if (loggedInUser.role === 'Admin' && userRole === 'SuperAdmin') {
 			await update(userID, {
 				name: userName,
 				email: userEmail,
@@ -136,7 +161,11 @@
 	 * Deletes a user with its associated id
 	 */
 	async function deleteUser() {
-		if (userID === '' || isUserAnInternOrExpert(loggedInUser.role)) {
+		if (
+			userID === '' ||
+			isUserAnInternOrExpert(loggedInUser.role) ||
+			!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)
+		) {
 			return;
 		}
 		await _delete(userID);
@@ -259,8 +288,18 @@
 				<button
 					on:click={() => updateUser()}
 					type="button"
-					disabled={!canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)}
-					class="{canUserUpdateInfo(loggedInUser.role, userID, loggedInUser.id)
+					disabled={!canUserUpdateInfo(
+						loggedInUser.role,
+						userID,
+						userRoleBeforeMutation,
+						loggedInUser.id
+					)}
+					class="{canUserUpdateInfo(
+						loggedInUser.role,
+						userID,
+						userRoleBeforeMutation,
+						loggedInUser.id
+					)
 						? 'text-2xl hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3'
 						: 'text-xl py-1 px-2 cursor-not-allowed opacity-50'}  text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Update</button
@@ -268,9 +307,11 @@
 				<!-- delete button -->
 				<button
 					on:click={() => deleteUser()}
-					disabled={isUserAnInternOrExpert(loggedInUser.role)}
+					disabled={isUserAnInternOrExpert(loggedInUser.role) ||
+						!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)}
 					type="button"
-					class="{isUserAnInternOrExpert(loggedInUser.role)
+					class="{isUserAnInternOrExpert(loggedInUser.role) ||
+					!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)
 						? 'py-1 px-2 text-xl cursor-not-allowed opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl '} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button

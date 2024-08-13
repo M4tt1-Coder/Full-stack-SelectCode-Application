@@ -227,6 +227,8 @@
 
 		// close popup
 		resetTaskModifyPopup();
+		// reload page
+		window.location.reload();
 	}
 
 	// adding and removing users from lists for assigning them to a task

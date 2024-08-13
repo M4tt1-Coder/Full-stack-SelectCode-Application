@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 import { defaultRole, isMember, Role, stringToRole } from 'lib/enums/roles';
 import { SHA256 } from 'crypto-js';
 import { ProjectsService } from 'src/projects/projects.service';
-import { User_ConvertDTOtoEntity } from 'src/users/user.entity';
+import { User_ConvertDTOtoEntity, UserDTO } from 'src/users/user.entity';
 import { TasksService } from 'src/tasks/tasks.service';
 import { project_ConvertDTOtoEntity } from 'src/projects/project.entity';
 
@@ -189,14 +189,30 @@ export class TrpcRouter {
             }
           }
 
+          // role convertion
           const convertedRole = stringToRole(role);
 
-          const user = this.users.update(id, {
-            name: name,
-            email,
-            password: SHA256(password).toString(),
-            role: convertedRole,
-          });
+          let user: UserDTO;
+
+          // don't change password if a new password has not been provided
+          if (
+            typeof password !== 'undefined' &&
+            password !== '' &&
+            password !== null
+          ) {
+            user = await this.users.update(id, {
+              name: name,
+              email,
+              password: SHA256(password).toString(),
+              role: convertedRole,
+            });
+          } else {
+            user = await this.users.update(id, {
+              name: name,
+              email,
+              role: convertedRole,
+            });
+          }
 
           return user;
         }),
