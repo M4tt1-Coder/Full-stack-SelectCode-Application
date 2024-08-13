@@ -28,18 +28,18 @@ dependencies:
     version: 3.4.9
   trpc-sveltekit:
     specifier: ^3.6.2
-    version: 3.6.2(@sveltejs/adapter-node@5.2.1)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ws@8.18.0)
+    version: 3.6.2(@sveltejs/adapter-node@5.2.2)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ws@8.18.0)
 
 devDependencies:
   '@sveltejs/adapter-auto':
-    specifier: ^3.2.3
-    version: 3.2.3(@sveltejs/kit@2.5.21)
+    specifier: ^3.2.4
+    version: 3.2.4(@sveltejs/kit@2.5.22)
   '@sveltejs/adapter-node':
-    specifier: ^5.2.1
-    version: 5.2.1(@sveltejs/kit@2.5.21)
+    specifier: ^5.2.2
+    version: 5.2.2(@sveltejs/kit@2.5.22)
   '@sveltejs/kit':
-    specifier: ^2.5.21
-    version: 2.5.21(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
+    specifier: ^2.5.22
+    version: 2.5.22(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.1.1
     version: 3.1.1(svelte@4.2.18)(vite@5.4.0)
@@ -63,7 +63,7 @@ devDependencies:
     version: 0.46.15(svelte@4.2.18)
   flowbite-svelte-icons:
     specifier: ^1.6.1
-    version: 1.6.1(svelte@4.2.18)(tailwind-merge@2.4.0)(tailwindcss@3.4.9)
+    version: 1.6.1(svelte@4.2.18)(tailwind-merge@2.5.2)(tailwindcss@3.4.9)
   globals:
     specifier: ^15.9.0
     version: 15.9.0
@@ -326,7 +326,7 @@ packages:
       debug: 4.3.6
       espree: 10.1.0
       globals: 14.0.0
-      ignore: 5.3.1
+      ignore: 5.3.2
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       minimatch: 3.1.2
@@ -622,28 +622,28 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
 
-  /@sveltejs/adapter-auto@3.2.3(@sveltejs/kit@2.5.21):
-    resolution: {integrity: sha512-VbWzQdNuunHsqa/OqPLqdL3fpyz9tH1f5CawjeYpPcowMI7Ng727M1/Z20yK1L7vrF7L2sYDFeE8vELgUy1Ibg==}
+  /@sveltejs/adapter-auto@3.2.4(@sveltejs/kit@2.5.22):
+    resolution: {integrity: sha512-a64AKYbfTUrVwU0xslzv1Jf3M8bj0IwhptaXmhgIkjXspBXhD0od9JiItQHchijpLMGdEDcYBlvqySkEawv6mQ==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
     dependencies:
-      '@sveltejs/kit': 2.5.21(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
+      '@sveltejs/kit': 2.5.22(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
       import-meta-resolve: 4.1.0
     dev: true
 
-  /@sveltejs/adapter-node@5.2.1(@sveltejs/kit@2.5.21):
-    resolution: {integrity: sha512-5vxep+1IN6PKbT5uviKuJelHscmFcK/fiNtgRFIVQ6EzdafnqmpyxHTg6UFg7Z/9w8jNauwOp3VjCgQA+qPDIA==}
+  /@sveltejs/adapter-node@5.2.2(@sveltejs/kit@2.5.22):
+    resolution: {integrity: sha512-BCX4zP0cf86TXpmvLQTnnT/tp7P12UMezf+5LwljP1MJC1fFzn9XOXpAHQCyP+pyHGy2K7p5gY0LyLcZFAL02w==}
     peerDependencies:
       '@sveltejs/kit': ^2.4.0
     dependencies:
       '@rollup/plugin-commonjs': 26.0.1(rollup@4.20.0)
       '@rollup/plugin-json': 6.1.0(rollup@4.20.0)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@4.20.0)
-      '@sveltejs/kit': 2.5.21(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
+      '@sveltejs/kit': 2.5.22(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0)
       rollup: 4.20.0
 
-  /@sveltejs/kit@2.5.21(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0):
-    resolution: {integrity: sha512-zHkaVZB5WNKVtosPhpPHLLvCdhUs3j6rRhDjRcXz9Mi7ZOeMe+xpzFkm7vs7RYQKMWDPUIfDngFDM3iGPyntMw==}
+  /@sveltejs/kit@2.5.22(@sveltejs/vite-plugin-svelte@3.1.1)(svelte@4.2.18)(vite@5.4.0):
+    resolution: {integrity: sha512-PQ98baF2WzvG5yiO4cZKJZJG60XjHTZD1jyho3u9Kmthx2ytdGYyVPPvKXgKXpKSq4wwctD9dl0d2blSbJMcOg==}
     engines: {node: '>=18.13'}
     hasBin: true
     requiresBuild: true
@@ -761,7 +761,7 @@ packages:
       '@typescript-eslint/visitor-keys': 8.0.0-alpha.51
       eslint: 9.9.0
       graphemer: 1.4.0
-      ignore: 5.3.1
+      ignore: 5.3.2
       natural-compare: 1.4.0
       ts-api-utils: 1.3.0(typescript@5.5.4)
       typescript: 5.5.4
@@ -1342,7 +1342,7 @@ packages:
       postcss: 8.4.41
       postcss-load-config: 3.1.4(postcss@8.4.41)
       postcss-safe-parser: 6.0.0(postcss@8.4.41)
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
       semver: 7.6.3
       svelte: 4.2.18
       svelte-eslint-parser: 0.41.0(svelte@4.2.18)
@@ -1408,7 +1408,7 @@ packages:
       file-entry-cache: 8.0.0
       find-up: 5.0.0
       glob-parent: 6.0.2
-      ignore: 5.3.1
+      ignore: 5.3.2
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       is-path-inside: 3.0.3
@@ -1561,7 +1561,7 @@ packages:
       - rollup
     dev: true
 
-  /flowbite-svelte-icons@1.6.1(svelte@4.2.18)(tailwind-merge@2.4.0)(tailwindcss@3.4.9):
+  /flowbite-svelte-icons@1.6.1(svelte@4.2.18)(tailwind-merge@2.5.2)(tailwindcss@3.4.9):
     resolution: {integrity: sha512-Kw/7BzA6fqlFq7tBNudwX0KVU4cbyyXcMcgHTraMwGBtvBQan0RKMbvWwqm4JZNvLGAvRv1BM2EF7rzo/oam1Q==}
     peerDependencies:
       svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
@@ -1569,7 +1569,7 @@ packages:
       tailwindcss: ^3.3.2
     dependencies:
       svelte: 4.2.18
-      tailwind-merge: 2.4.0
+      tailwind-merge: 2.5.2
       tailwindcss: 3.4.9
     dev: true
 
@@ -1583,7 +1583,7 @@ packages:
       apexcharts: 3.52.0
       flowbite: 2.5.1
       svelte: 4.2.18
-      tailwind-merge: 2.4.0
+      tailwind-merge: 2.5.2
     transitivePeerDependencies:
       - rollup
     dev: true
@@ -1687,7 +1687,7 @@ packages:
       array-union: 2.1.0
       dir-glob: 3.0.1
       fast-glob: 3.3.2
-      ignore: 5.3.1
+      ignore: 5.3.2
       merge2: 1.4.1
       slash: 3.0.0
     dev: true
@@ -1719,8 +1719,8 @@ packages:
     engines: {node: '>=16.17.0'}
     dev: true
 
-  /ignore@5.3.1:
-    resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
+  /ignore@5.3.2:
+    resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
     dev: true
 
@@ -2229,7 +2229,7 @@ packages:
       postcss: ^8.2.14
     dependencies:
       postcss: 8.4.41
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
 
   /postcss-safe-parser@6.0.0(postcss@8.4.41):
     resolution: {integrity: sha512-FARHN8pwH+WiS2OPCxJI8FuRJpTVnn6ZNFiqAM2aeW2LwTHWWmWgIyKC6cUo0L8aeKiF/14MNvnpls6R2PBeMQ==}
@@ -2249,8 +2249,8 @@ packages:
       postcss: 8.4.41
     dev: true
 
-  /postcss-selector-parser@6.1.1:
-    resolution: {integrity: sha512-b4dlw/9V8A71rLIDsSwVmak9z2DuBUB7CA1/wSdelNEzqsjoSPeADTWNO09lpH49Diy3/JIZ2bSPB1dI3LJCHg==}
+  /postcss-selector-parser@6.1.2:
+    resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
     engines: {node: '>=4'}
     dependencies:
       cssesc: 3.0.0
@@ -2698,8 +2698,8 @@ packages:
       svg.js: 2.7.1
     dev: true
 
-  /tailwind-merge@2.4.0:
-    resolution: {integrity: sha512-49AwoOQNKdqKPd9CViyH5wJoSKsCDjUlzL8DxuGp3P1FsGY36NJDAa18jLZcaHAUUuTj+JB8IAo8zWgBNvBF7A==}
+  /tailwind-merge@2.5.2:
+    resolution: {integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==}
     dev: true
 
   /tailwindcss@3.4.9:
@@ -2726,7 +2726,7 @@ packages:
       postcss-js: 4.0.1(postcss@8.4.41)
       postcss-load-config: 4.0.2(postcss@8.4.41)
       postcss-nested: 6.2.0(postcss@8.4.41)
-      postcss-selector-parser: 6.1.1
+      postcss-selector-parser: 6.1.2
       resolve: 1.22.8
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -2777,7 +2777,7 @@ packages:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
 
-  /trpc-sveltekit@3.6.2(@sveltejs/adapter-node@5.2.1)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ws@8.18.0):
+  /trpc-sveltekit@3.6.2(@sveltejs/adapter-node@5.2.2)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ws@8.18.0):
     resolution: {integrity: sha512-wfcUGpasdSQjNaMnbaaHs4gnh5580oNoOYBsnWujE8+tXyyYAxYA2z6vrQmuG4/rOLdbiEns5ISfsejZz9l+2Q==}
     peerDependencies:
       '@sveltejs/adapter-node': '>=1.2'
@@ -2785,7 +2785,7 @@ packages:
       '@trpc/server': ^10.0.0
       ws: '>=8'
     dependencies:
-      '@sveltejs/adapter-node': 5.2.1(@sveltejs/kit@2.5.21)
+      '@sveltejs/adapter-node': 5.2.2(@sveltejs/kit@2.5.22)
       '@trpc/client': 10.45.2(@trpc/server@10.45.2)
       '@trpc/server': 10.45.2
       ws: 8.18.0

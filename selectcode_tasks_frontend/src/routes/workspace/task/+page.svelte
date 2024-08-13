@@ -7,7 +7,10 @@
 	import { ChevronDoubleRightOutline, CloseCircleSolid } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
-	import { canUserModifyTaskStatus } from '$lib/permissions/restrictedActions';
+	import {
+		canUserModifyTaskStatus,
+		isUserAnInternOrExpert
+	} from '$lib/permissions/restrictedActions';
 
 	// loading all needed resources to render the task dashboard.
 	onMount(async () => {
@@ -175,7 +178,7 @@
 	 */
 	async function deleteTask(): Promise<void> {
 		// permission check
-		if (loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert') {
+		if (isUserAnInternOrExpert(loggedInUser.role)) {
 			console.log('Unable to delete task due to permission denied');
 			return;
 		}
@@ -208,7 +211,7 @@
 		}
 		// user can update the task's status even as intern / expert when he or she is assigned to the task
 		// update task
-		if (loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern') {
+		if (isUserAnInternOrExpert(loggedInUser.role)) {
 			await update(modify_taskID, {
 				status: modify_taskStatus,
 				assignees: modify_taskAddedAssignees
@@ -377,9 +380,9 @@
 								<p class="text-left font-medium text-lg">{assignee.name}</p>
 								<!-- button -->
 								<button
-									disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
+									disabled={isUserAnInternOrExpert(loggedInUser.role)}
 									type="button"
-									class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+									class="{isUserAnInternOrExpert(loggedInUser.role)
 										? 'cursor-not-allowed opacity-50'
 										: 'hover:text-white hover:bg-red-700'} text-base font-medium text-red-700 rounded-lg p-1 transition-all duration-500"
 									on:click={() => removeUserfromTask(assignee.id)}>Remove</button
@@ -398,9 +401,9 @@
 								<p class="text-left font-medium text-lg">{assignee.name}</p>
 								<!-- button -->
 								<button
-									disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
+									disabled={isUserAnInternOrExpert(loggedInUser.role)}
 									type="button"
-									class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+									class="{isUserAnInternOrExpert(loggedInUser.role)
 										? 'cursor-not-allowed opacity-50'
 										: 'hover:text-white hover:bg-green-700'} text-base font-medium text-green-700 rounded-lg p-1 transition-all duration-500"
 									on:click={() => addUserToTask(assignee.id)}>Add</button
@@ -432,10 +435,10 @@
 				>
 				<!-- delete button -->
 				<button
-					disabled={loggedInUser.role === 'Expert' || loggedInUser.role === 'Intern'}
+					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					on:click={deleteTask}
 					type="button"
-					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
+					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
 						: 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'} text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Delete</button

@@ -3,6 +3,21 @@
 import type { User } from '$lib/types/user';
 
 /**
+ *	A simple utility function for checking if a user is a intern or expert.
+ *
+ * @param userRole - Role of the user
+ * @returns True if the user is a intern or expert
+ */
+export function isUserAnInternOrExpert(
+	userRole: 'Intern' | 'Expert' | 'Admin' | 'SuperAdmin'
+): boolean {
+	if (userRole === 'Intern' || userRole === 'Expert') {
+		return true;
+	}
+	return false;
+}
+
+/**
  * Is only called in the user page.
  *
  * Determines whether a user is allowed to update some information.

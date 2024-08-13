@@ -2,8 +2,6 @@
 # If you need more help, visit the Docker Compose reference guide at
 # https://docs.docker.com/go/compose-spec-reference/
 
-# TODO - Refactor the docker compose file
-
 # Here the instructions define your application as a service called "server".
 # This service is built from the Dockerfile in the current directory.
 # You can add other services your application may depend on here, such as a
@@ -37,12 +35,7 @@ services:
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
-        - DB_TYPE=postgres
-        - PG_USER=postgres
-        - PG_PASSWORD=postgres
-        - PG_DB=postgres
-        - PG_PORT=5432
-        - PG_HOST=db
+      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
     ports:
       - 4000:4000
     develop:
