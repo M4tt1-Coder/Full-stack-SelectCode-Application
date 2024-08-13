@@ -187,7 +187,7 @@ After using the app, we want to close the application and shut down the containe
   docker compose down
 ```
 
-2. If you build your containers **undetached**, press `Control + C` in the terminal to exit the process and enter the last command again to shut down the containers.
+2. If you built your containers **undetached**, press `Control + C` in the terminal to exit the process and enter the last command again to shut down the containers.
 
 ## Credits
 
