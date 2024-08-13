@@ -19,7 +19,7 @@ The [SelectCode](https://www.selectcode.de/) [Challenge](https://apply.selectcod
 As mentioned above, I had to use some things like PostgreSQL in the app, so I couldn't change that. But I also have been given some freespace for my own decision on what to use. ( _More info on the challenge website_ )
 
 - For the **frontend**, I was sure to use Svelte Kit because of SSR and it's general easy usage and nice features like [stores](https://svelte.dev/docs/svelte-store) or [component](https://svelte.dev/docs/svelte-components) based development. ( _Even though I couldn't make much use of it, explanation below!_ )
-- Coming to the **backend**, I tried [Prisma](https://www.prisma.io/) before, because that is also my first time using it, I couldn't establish a good connection to the PostgreSQL database. So in the end I chose TypeORM for its good integration into NestJS and great documentation.
+- Coming to the **backend**, I tried [Prisma](https://www.prisma.io/) at first but because that is also my first time using it, I couldn't establish a good connection to the PostgreSQL database. So in the end I chose TypeORM for its good integration into NestJS and great documentation.
 
 Main challenge for me in this app was _tRPC_, it is a new way of dealing with the dataflow between frontend & backend but it also comes with some difficulties in the right implementation for specific frameworks and environments.
 
@@ -148,6 +148,18 @@ Now go the folder **_./selectcode_tasks_backend_** and **_./selectcode_tasks_fro
 ```
 
 This will install all dependencies!
+
+#### Testing
+
+If you want to run all implemented test, run this command in a terminal at the route directory:
+
+```bash
+  pnpm test
+```
+
+This will run [vitest](https://vitest.dev/) and runs all test cases that can be found in the repository.
+
+If you look in the `package.json` file, you will find a scripts section with commands, there you are able to find the command **_test_**.
 
 **_Okay now you are good to go and start coding!_**
 
