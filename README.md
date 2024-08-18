@@ -171,6 +171,8 @@ Go [here](https://docs.docker.com/guides/docker-concepts/the-basics/what-is-a-co
 
 ### Starting the Project
 
+At first, you have to start the docker daemon. Just simply open [Docker Desktop](https://www.docker.com/products/docker-desktop/) or manually [here](https://docs.docker.com/engine/daemon/start/).
+
 Head to the route directory and open a new terminal!
 
 Now enter the following command:
