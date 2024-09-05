@@ -4,6 +4,9 @@ import type { Handle } from '@sveltejs/kit';
 // import { get } from '$lib/helper/userHelper';
 // import { browser } from '$app/environment';
 
+// Doc about tRPC usage in svelte kit: https://icflorescu.github.io/trpc-sveltekit/getting-started
+// I don't know how to implement it well actually, with my setup
+
 //those paths aren't protected by the middleware
 const allowedRoutes = [
 	'/',
@@ -18,7 +21,6 @@ export const handle: Handle = async ({ resolve, event }) => {
 	if (!allowedRoutes.includes(event.url.pathname)) {
 		redirect(307, '/');
 	}
-
 	// const user = await caller;
 
 	// can just pass when user id is valid

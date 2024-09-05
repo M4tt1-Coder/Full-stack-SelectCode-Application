@@ -4,8 +4,6 @@ import { TrpcRouter } from './trpc/trpc.router';
 
 // https://www.tomray.dev/nestjs-nextjs-trpc [for trpc setup]
 
-// TODO - Possibly add tests later on -> {utility functions in the entity files; trpc / service tests after the frontend is finished}
-
 /**
  * Starts the server
  *
