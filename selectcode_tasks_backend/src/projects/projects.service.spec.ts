@@ -3,13 +3,15 @@ import { ProjectsService } from './projects.service';
 import { Repository } from 'typeorm';
 import { Project, ProjectDTO } from './project.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Status } from 'lib/enums/status';
 // import { MockType } from 'lib/testing/mockTypes';
 // import { projectRepoMockFactory } from 'lib/testing/mockFactories';
 
 // I could not figure out how to mock the repository of the project entity.
 // Using a mock factory I could implement some unit tests.
 // Source: https://stackoverflow.com/questions/55366037/inject-typeorm-repository-into-nestjs-service-for-mock-data-testing
+
+//! All other entities would have the same unit test cases.
+//! So there is no need to implement own test files for them.
 
 /**
  *  Ensure some typesafety when mocking
@@ -25,17 +27,7 @@ type MockType<T> = {
  * Mock all function of the project repository that are needed
  */
 const projectRepoMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({
-  find: jest.fn((projects: Project[], status?: Status) => {
-    if (status) {
-      return projects.filter((project) => {
-        if (project.status === status) {
-          console.log(`Found: ${project.id}`);
-          return project;
-        }
-      });
-    }
-    return projects;
-  }),
+  find: jest.fn((projects) => projects),
   findOne: jest.fn((project) => project),
   create: jest.fn((project) => project),
   save: jest.fn((project) => project),
@@ -140,15 +132,32 @@ describe('project database handling functions', () => {
       expect(await projectService.findAll()).toEqual([]);
     });
 
-    it('should return all projects in the database', async () => {
-      mockProjectRepository.find.mockReturnValue(mockProjectEntities);
-      expect(await projectService.findAll()).toStrictEqual(mockProjectDTOs);
+    it('should return all projects in the database in finished state', async () => {
+      // mockProjectRepository.find.mockReturnValue(mockProjectEntities);
+      mockProjectRepository.find.mockImplementation(() => {
+        return mockProjectEntities.filter((project) => {
+          if (project.status === 'Finished') {
+            console.log(`Found: ${project.id}`);
+            return project;
+          }
+        });
+      });
+      expect(await projectService.findAll()).toStrictEqual([
+        mockProjectDTOs[0],
+      ]);
     });
   });
 
   describe('findOne -> one specific project', () => {
     it('should return project of the specified id', async () => {
-      mockProjectRepository.findOne.mockReturnValue(mockProjectEntities[0]);
+      mockProjectRepository.findOne.mockImplementation(() => {
+        let output: Project;
+        mockProjectEntities.forEach((project) => {
+          if (project.id === '67536361-fef6-433e-b2b9-ef7f728833e1')
+            output = project;
+        });
+        return output;
+      });
       expect(
         await projectService.findOne('67536361-fef6-433e-b2b9-ef7f728833e1'),
       ).toEqual(mockProjectDTOs[0]);
