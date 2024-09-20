@@ -67,7 +67,9 @@ export type UserDTO = {
  */
 export function User_ConvertDTOtoEntity(userDTO: UserDTO): User {
   if (!userDTO || typeof userDTO === 'undefined') {
-    return;
+    throw new Error(
+      'An empty user DTO object was passed to "User_ConvertDTOtoEntity" - function!',
+    );
   }
   return {
     name: userDTO.name,
@@ -87,7 +89,9 @@ export function User_ConvertDTOtoEntity(userDTO: UserDTO): User {
  */
 export function User_ConvertEntityToDTO(user: User): UserDTO {
   if (!user || typeof user === 'undefined') {
-    return;
+    throw new Error(
+      'Failed to continue with an empty user object in the "User_ConvertEntitytoDTO" - function.',
+    );
   }
   return {
     name: user.name,
@@ -109,7 +113,9 @@ export function UserList_ConvertEntityToDTO(userList: User[]): UserDTO[] {
   const output: UserDTO[] = [];
 
   if (typeof userList === 'undefined' || !userList || userList.length === 0) {
-    console.log('No users');
+    console.log(
+      'No users were passed to the "UserList_ConvertEntityToDTO" - function!',
+    );
     return output;
   }
 
@@ -129,7 +135,9 @@ export function UserList_ConvertDTOtoEntity(userList: UserDTO[]): User[] {
   const output: User[] = [];
 
   if (typeof userList === 'undefined' || userList.length === 0) {
-    console.log('No users');
+    console.log(
+      'No users were passed to the "UserList_ConvertDTOToEntity" - function',
+    );
     return output;
   }
 

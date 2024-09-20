@@ -59,7 +59,7 @@ export class UsersService {
     const output: User[] = [];
 
     if (typeof userIDs === 'undefined' || userIDs.length === 0) {
-      console.log('No user IDs');
+      console.log('No user IDs passed to "findAllOfTask"');
     }
 
     for (let i = 0; i < userIDs.length; i++) {

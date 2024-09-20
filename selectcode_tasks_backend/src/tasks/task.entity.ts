@@ -75,7 +75,8 @@ export type TaskDTO = {
  * @param task - DTO to entity
  */
 export function task_ConvertDTOtoEntity(task: TaskDTO): Task {
-  if (!task || typeof task === 'undefined') return null;
+  if (!task || typeof task === 'undefined')
+    throw new Error('Got an empty task DTO object!');
   return {
     id: task.id,
     name: task.name,
@@ -92,7 +93,8 @@ export function task_ConvertDTOtoEntity(task: TaskDTO): Task {
  * @param task - Entity to DTO
  */
 export function task_ConvertEntityToDTO(task: Task): TaskDTO {
-  if (!task || typeof task === 'undefined') return null;
+  if (!task || typeof task === 'undefined')
+    throw new Error('Received an empty task instance!');
   return {
     id: task.id,
     name: task.name,

@@ -23,17 +23,17 @@ const assignedUsers: User[] = [
 describe('Make sure that the right results for users with different roles come out', () => {
 	// test for updating a user properties
 	it('Admin should immediately return true', () => {
-		expect(canUserUpdateInfo('Admin', '', '')).toBe(true);
+		expect(canUserUpdateInfo('Admin', '', 'Expert', '')).toBe(true);
 	});
 
 	// user is intern / expert but isnt the user to be updated
 	it('User is an Intern and is not the user that he wants to modify -> should be false', () => {
-		expect(canUserUpdateInfo('Intern', userOneID, userTwoID)).toBe(false);
+		expect(canUserUpdateInfo('Intern', userOneID, 'Intern', userTwoID)).toBe(false);
 	});
 
 	// user is intern / expert and the same user he / she wants to modify
 	it('User is an intern but updates his own date -> true', () => {
-		expect(canUserUpdateInfo('Intern', userOneID, userOneID)).toBe(true);
+		expect(canUserUpdateInfo('Intern', userOneID, 'Intern', userOneID)).toBe(true);
 	});
 });
 

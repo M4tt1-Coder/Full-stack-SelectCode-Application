@@ -84,13 +84,14 @@ export class TasksService {
     const tasks = await this.findAll();
 
     if (!tasks || tasks.length === 0) {
-      throw new Error('No tasks found');
+      throw new Error('No tasks were found in the database');
     }
 
     tasks.forEach((task) => {
       if (!task.assignees || task.assignees.length === 0) {
-        console.log(`Task ${task.id} has no assignees`);
-        return;
+        throw new Error(
+          `No users were assigned to the task with the id ${task.id}`,
+        );
       }
 
       task.assignees.forEach((assignee) => {
