@@ -7,6 +7,7 @@
 	import type { User } from '$lib/types/user';
 	import { goto } from '$app/navigation';
 	import pkg from 'crypto-js';
+	import ErrorAlert from '$lib/components/errorAlert.svelte';
 
 	// sign in variables
 	let email = '';
@@ -21,14 +22,14 @@
 
 		// variable validation
 		if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
-			invalidInput = true;
+			errorHandler('invalidInput');
 			return;
 		}
 
 		const users: User[] = await getAll();
 
 		if (users.length === 0) {
-			noUsersFound = true;
+			errorHandler('noUsersFound');
 			return;
 		}
 		users.forEach((user) => {
@@ -58,7 +59,7 @@
 			typeof signUpPassword !== 'string' ||
 			typeof signUpEmail !== 'string'
 		) {
-			invalidInput = true;
+			errorHandler('invalidInput');
 			return;
 		}
 
@@ -73,7 +74,7 @@
 		});
 
 		if (!createdUser) {
-			userNotCreated = true;
+			errorHandler('userNotCreated');
 			return;
 		}
 
@@ -83,7 +84,27 @@
 		isSignUpPopupOpen.set(false);
 	}
 
-	// TODO - add little problem info
+	// error control function
+	/**
+	 * Is called when a error occurred.
+	 *
+	 * After some seconds the error popover automatically vanishes.
+	 *
+	 * @param errorType - Error type which occured to open a popup.
+	 */
+	function errorHandler(errorType: 'invalidInput' | 'userNotCreated' | 'noUsersFound') {
+		// depending on the error type -> display the error popup
+		if (errorType == 'invalidInput') invalidInput = true;
+		if (errorType == 'noUsersFound') noUsersFound = true;
+		if (errorType == 'userNotCreated') userNotCreated = true;
+		// with time interval -> close all the popups
+		setTimeout(() => {
+			invalidInput = false;
+			noUsersFound = false;
+			userNotCreated = false;
+		}, 7000);
+	}
+
 	// error booleans
 	let invalidInput = false;
 	let userNotCreated = false;
@@ -105,6 +126,27 @@
 <svelte:head>
 	<title>Start Challenge</title>
 </svelte:head>
+
+{#if userNotCreated}
+	<ErrorAlert
+		errorMessage="The user could not be created! Check if all your data input is valid and if all app components are running properly!"
+		errorTitle="User not created"
+	/>
+{/if}
+
+{#if noUsersFound}
+	<ErrorAlert
+		errorMessage="Received an empty list of users from the backend! Create a user before you try to proceed or make sure created users are properly saved in the database!"
+		errorTitle="No Users found"
+	/>
+{/if}
+
+{#if invalidInput}
+	<ErrorAlert
+		errorMessage="Your data input was in the wrong format! Either the wrong data type or an empty entry. Please try again!"
+		errorTitle="Invalid Input"
+	/>
+{/if}
 
 {#if $isSignUpPopupOpen}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
