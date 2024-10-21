@@ -9,10 +9,15 @@
 	 */
 	type pages = 'User' | 'Task' | 'Project';
 
-	/**
+	
+	interface Props {
+		/**
 	 * Prop to define on which page we are on.
 	 */
-	export let page: pages = 'User';
+		page?: pages;
+	}
+
+	let { page = 'User' }: Props = $props();
 </script>
 
 <header transition:fade={{ duration: 700 }} class="w-screen p-5 h-fit bg-black">
@@ -33,7 +38,7 @@
 					<button
 						type="button"
 						class="aspect-square h-fit w-fit"
-						on:click={() => goto('/workspace/user')}
+						onclick={() => goto('/workspace/user')}
 					>
 						<UserOutline
 							class="size-10 text-white transition-all duration-500 hover:bg-white hover:text-black rounded-full p-1"
@@ -48,7 +53,7 @@
 					<button
 						type="button"
 						class="aspect-square h-fit w-fit"
-						on:click={() => goto('/workspace/task')}
+						onclick={() => goto('/workspace/task')}
 					>
 						<ClipboardCheckOutline
 							class="size-10 text-white transition-all duration-700 ease-in-out hover:bg-white hover:text-black rounded-full p-1"
@@ -63,7 +68,7 @@
 					<button
 						type="button"
 						class="aspect-square h-fit w-fit"
-						on:click={() => goto('/workspace/project')}
+						onclick={() => goto('/workspace/project')}
 					>
 						<BookOpenOutline
 							class="size-10 text-white transition-all duration-700 ease-in-out hover:bg-white hover:text-black rounded-full p-1"
@@ -77,7 +82,7 @@
 			<button
 				type="button"
 				class="text-2xl text-white font-medium transition-all duration-700 ease-in-out hover:bg-white hover:text-black rounded-lg p-2"
-				on:click={() => {
+				onclick={() => {
 					// clears session storage
 					userLogin.logout();
 					goto('/');

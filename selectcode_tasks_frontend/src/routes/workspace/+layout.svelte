@@ -2,6 +2,11 @@
 	import { onMount } from 'svelte';
 	import { routesProtected } from '$lib/middleware/authenticationMiddleware';
 	import { goto } from '$app/navigation';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	// Middleware measure
 	// using session storage -> better approach is with cookies and hooks as middlware BUT
@@ -16,4 +21,4 @@
 	});
 </script>
 
-<slot />
+{@render children?.()}

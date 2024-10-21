@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import type { User } from '$lib/types/user';
@@ -29,7 +32,7 @@
 	/**
 	 * Represents the current logged in user
 	 */
-	let loggedInUser: User;
+	let loggedInUser: User = $state();
 
 	// ____________________
 
@@ -37,17 +40,17 @@
 	/**
 	 * All users that have been registered yet
 	 */
-	let users: User[] = [];
+	let users: User[] = $state([]);
 
 	/**
 	 * Search input for the user to filte after some traits of the user
 	 */
-	let search_string: string = '';
+	let search_string: string = $state('');
 
 	/**
 	 *	Filtered list of all users
 	 */
-	$: userList = users.filter((user: User) => {
+	let userList = $derived(users.filter((user: User) => {
 		if (
 			user.email.includes(search_string) ||
 			user.name.includes(search_string) ||
@@ -55,7 +58,7 @@
 		) {
 			return user;
 		}
-	});
+	}));
 
 	// delete & update popover
 
@@ -63,11 +66,11 @@
 
 	// representing variables
 	// name, email, role and  password can be changed
-	let userName: string = '';
-	let userEmail: string = '';
-	let userRole: Role = 'Intern';
-	let userPassword: string = '';
-	let userID: string = '';
+	let userName: string = $state('');
+	let userEmail: string = $state('');
+	let userRole: Role = $state('Intern');
+	let userPassword: string = $state('');
+	let userID: string = $state('');
 
 	/**
 	 * For permission checking
@@ -76,12 +79,12 @@
 	 *
 	 * Can't be changed by the user
 	 */
-	let userRoleBeforeMutation: Role = 'Intern';
+	let userRoleBeforeMutation: Role = $state('Intern');
 
 	/**
 	 * Determines whether user details are shown or closed
 	 */
-	let showModifyPopover: boolean = false;
+	let showModifyPopover: boolean = $state(false);
 
 	/**
 	 * Just prepares popover for the next request
@@ -179,24 +182,24 @@
 </svelte:head>
 
 {#if showModifyPopover}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_hxl:min-h-screen hxl:h-screen z-10 flex items-center justify-center bg-slate-900"
-		on:click={resetModifyPopover}
+		onclick={resetModifyPopover}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-3/5 max-w-[600px] relative grid grid-cols-1 grid-rows-6 p-4 transition-all duration-700 my-10"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={resetModifyPopover}
+				onclick={resetModifyPopover}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -286,7 +289,7 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- update button -->
 				<button
-					on:click={() => updateUser()}
+					onclick={() => updateUser()}
 					type="button"
 					disabled={!canUserUpdateInfo(
 						loggedInUser.role,
@@ -306,7 +309,7 @@
 				>
 				<!-- delete button -->
 				<button
-					on:click={() => deleteUser()}
+					onclick={() => deleteUser()}
 					disabled={isUserAnInternOrExpert(loggedInUser.role) ||
 						!canUserDeleteUser(loggedInUser.role, userRoleBeforeMutation)}
 					type="button"
@@ -361,7 +364,7 @@
 					<button
 						class="p-2 bg-black text-white rounded-lg transition-all duration-500 hover:ring-2 hover:ring-black hover:bg-white hover:text-black"
 						type="button"
-						on:click={() => {
+						onclick={() => {
 							openUserDetails(user.id);
 						}}
 					>

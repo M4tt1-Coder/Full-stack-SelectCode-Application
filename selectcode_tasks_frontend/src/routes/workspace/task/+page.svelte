@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { run, createBubbler, stopPropagation } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { goto } from '$app/navigation';
 	import { getAll, update, _delete, get } from '$lib/helper/taskHelper';
 	import { getAll as allUsers, getSignedInUser } from '$lib/helper/userHelper';
@@ -28,22 +31,22 @@
 	/**
 	 * Logged in user
 	 */
-	let loggedInUser: User;
+	let loggedInUser: User = $state();
 
 	// Search functionality
-	let tasks: Task[] = [];
+	let tasks: Task[] = $state([]);
 
 	/**
 	 * Is potential subString of some properties of a task for searching
 	 */
-	let search_string: string = '';
+	let search_string: string = $state('');
 
 	/**
 	 * Uses `search_string` to filter the list of tasks that is shown.
 	 *
 	 * Returns all tasks if `search_string` is empty.
 	 */
-	$: taskList = tasks.filter((task: Task) => {
+	let taskList = $derived(tasks.filter((task: Task) => {
 		// when there are no tasks -> don't continue
 		if (task.assignees.length > 0) {
 			// if some assignee contains the 'search_string'
@@ -62,7 +65,7 @@
 		) {
 			return task;
 		}
-	});
+	}));
 	// ________
 
 	// modify task
@@ -70,7 +73,7 @@
 	/**
 	 * Lets the popover be shown.
 	 */
-	let showTaskModifyPopup: boolean = false;
+	let showTaskModifyPopup: boolean = $state(false);
 
 	/**
 	 * Sets all variables to their default values.
@@ -137,15 +140,15 @@
 	/**
 	 *	Name of the task
 	 */
-	let modify_taskName: string = '';
+	let modify_taskName: string = $state('');
 	/**
 	 *	Description of the task
 	 */
-	let modify_taskDescription: string = '';
+	let modify_taskDescription: string = $state('');
 	/**
 	 * Status of the task
 	 */
-	let modify_taskStatus: Status = 'Preparing';
+	let modify_taskStatus: Status = $state('Preparing');
 	/**
 	 * Id of the task
 	 */
@@ -153,21 +156,27 @@
 	/**
 	 * Assigned user to the task
 	 */
-	let modify_taskAddedAssignees: User[] = [];
+	let modify_taskAddedAssignees: User[] = $state([]);
 	/**
 	 *	Reactive list of assignees
 	 */
-	$: reactive_addedAssignees = modify_taskAddedAssignees;
+	let reactive_addedAssignees;
+	run(() => {
+		reactive_addedAssignees = modify_taskAddedAssignees;
+	});
 
 	// users that can be added to one task
 	/**
 	 *	List of `User`s that can be added to the task
 	 */
-	let modify_taskOpenAssignees: User[] = [];
+	let modify_taskOpenAssignees: User[] = $state([]);
 	/**
 	 *	Reactive list of `User`s that can be added to the task
 	 */
-	$: reactive_openAssignees = modify_taskOpenAssignees;
+	let reactive_openAssignees;
+	run(() => {
+		reactive_openAssignees = modify_taskOpenAssignees;
+	});
 
 	type Status = 'Preparing' | 'Development' | 'Finished';
 
@@ -276,24 +285,24 @@
 
 <!-- modify popover for a task -->
 {#if showTaskModifyPopup}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_h2xl:min-h-screen h2xl:h-screen z-10 flex items-center justify-center bg-slate-900"
-		on:click={resetTaskModifyPopup}
+		onclick={resetTaskModifyPopup}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-[90%] max-w-[800px] relative grid grid-cols-1 grid-rows-8 p-4 transition-all duration-700 my-10 gap-2"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={resetTaskModifyPopup}
+				onclick={resetTaskModifyPopup}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -341,7 +350,7 @@
 					placeholder="Give me some intel ..."
 					rows="6"
 					minlength="20"
-				/>
+				></textarea>
 			</div>
 			<!-- status -->
 			<div class="row-span-1 w-full h-full flex flex-col items-start justify-center">
@@ -387,7 +396,7 @@
 									class="{isUserAnInternOrExpert(loggedInUser.role)
 										? 'cursor-not-allowed opacity-50'
 										: 'hover:text-white hover:bg-red-700'} text-base font-medium text-red-700 rounded-lg p-1 transition-all duration-500"
-									on:click={() => removeUserfromTask(assignee.id)}>Remove</button
+									onclick={() => removeUserfromTask(assignee.id)}>Remove</button
 								>
 							</div>
 						{/each}
@@ -408,7 +417,7 @@
 									class="{isUserAnInternOrExpert(loggedInUser.role)
 										? 'cursor-not-allowed opacity-50'
 										: 'hover:text-white hover:bg-green-700'} text-base font-medium text-green-700 rounded-lg p-1 transition-all duration-500"
-									on:click={() => addUserToTask(assignee.id)}>Add</button
+									onclick={() => addUserToTask(assignee.id)}>Add</button
 								>
 							</div>
 						{/each}
@@ -424,7 +433,7 @@
 						loggedInUser.id,
 						modify_taskAddedAssignees
 					)}
-					on:click={updateTask}
+					onclick={updateTask}
 					type="button"
 					class="{canUserModifyTaskStatus(
 						loggedInUser.role,
@@ -438,7 +447,7 @@
 				<!-- delete button -->
 				<button
 					disabled={isUserAnInternOrExpert(loggedInUser.role)}
-					on:click={deleteTask}
+					onclick={deleteTask}
 					type="button"
 					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
@@ -486,7 +495,7 @@
 					<button
 						class="p-2 bg-black text-white rounded-lg transition-all duration-500 hover:ring-2 hover:ring-black hover:bg-white hover:text-black"
 						type="button"
-						on:click={() => {
+						onclick={() => {
 							openTaskDetails(task.id);
 						}}
 					>

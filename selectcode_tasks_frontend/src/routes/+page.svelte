@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { fade } from 'svelte/transition';
 	import { isSignUpPopupOpen } from '$lib/stores/isSignUpPopoverOpen';
 	import { userLogin } from '$lib/stores/signedInUserId';
@@ -10,8 +13,8 @@
 	import ErrorAlert from '$lib/components/errorAlert.svelte';
 
 	// sign in variables
-	let email = '';
-	let password = '';
+	let email = $state('');
+	let password = $state('');
 
 	/**
 	 * sign in to the app
@@ -43,9 +46,9 @@
 	}
 
 	// sign up variables
-	let signUpEmail = '';
-	let signUpPassword = '';
-	let signUpName = '';
+	let signUpEmail = $state('');
+	let signUpPassword = $state('');
+	let signUpName = $state('');
 
 	/**
 	 * Function for sign up for the app
@@ -106,21 +109,21 @@
 	}
 
 	// error booleans
-	let invalidInput = false;
-	let userNotCreated = false;
-	let noUsersFound = false;
+	let invalidInput = $state(false);
+	let userNotCreated = $state(false);
+	let noUsersFound = $state(false);
 
 	/**
 	 * A reactive function ...
 	 * @returns true when all necessary input fields are full
 	 */
-	$: areAllInputsfull = () => {
+	let areAllInputsfull = $derived(() => {
 		if (email === '' || password === '') {
 			return false;
 		} else {
 			return true;
 		}
-	};
+	});
 </script>
 
 <svelte:head>
@@ -149,22 +152,22 @@
 {/if}
 
 {#if $isSignUpPopupOpen}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_hxl:min-h-screen hxl:h-screen z-10 flex items-center justify-center bg-black"
-		on:click={() => isSignUpPopupOpen.set(false)}
+		onclick={() => isSignUpPopupOpen.set(false)}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-1/2 max-w-[510px] relative grid grid-cols-1 grid-rows-5 p-4 transition-all duration-700 my-10"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={() => isSignUpPopupOpen.set(false)}
+				onclick={() => isSignUpPopupOpen.set(false)}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -234,7 +237,7 @@
 			<!-- button -->
 			<div class="row-span-1 w-full h-full flex flex-col items-center justify-center">
 				<button
-					on:click={signUp}
+					onclick={signUp}
 					type="button"
 					class="hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
 					>Register</button
@@ -317,7 +320,7 @@
 						<!-- sign in button -->
 						<div class="row-span-1 w-full h-full flex items-center justify-center">
 							<button
-								on:click={signIN}
+								onclick={signIN}
 								class="{areAllInputsfull()
 									? 'hover:font-semibold hover:text-white hover:bg-black hover:-translate-y-2 py-2 px-3 text-2xl'
 									: 'cursor-not-allowed py-1 px-2 text-xl bg-slate-100 opacity-50'}  text-black font-medium ring-2 ring-black rounded-lg transition-all duration-500"
@@ -334,7 +337,7 @@
 									Haven't sign up yet? -> <button
 										type="button"
 										class="px-1 text-black transition-all duration-700 hover:text-blue-500 underlined-link relative"
-										on:click={() => isSignUpPopupOpen.set(true)}>Register</button
+										onclick={() => isSignUpPopupOpen.set(true)}>Register</button
 									>
 								</p>
 							</div>

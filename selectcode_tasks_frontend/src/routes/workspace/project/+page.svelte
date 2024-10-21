@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { isUserAnInternOrExpert } from '$lib/permissions/restrictedActions';
 	import { goto } from '$app/navigation';
 	import { getAll, create, update, _delete, get } from '$lib/helper/projectHelper';
@@ -24,15 +27,15 @@
 	});
 
 	// get all projects
-	let projects: Project[] = [];
+	let projects: Project[] = $state([]);
 
 	// permissions for the logged in user to do
-	let loggedInUser: User;
+	let loggedInUser: User = $state();
 
 	/**
 	 *	User entered a string like `Matthis` to search for names, email, ...
 	 */
-	let search_string: string = '';
+	let search_string: string = $state('');
 
 	/**
 	 *	Updates the shown projects with filtering over all projects & searching for subStrings in properties
@@ -40,7 +43,7 @@
 	 *
 	 * 	Searches in `description`, `name`, `status` and `creator.id`
 	 */
-	$: projectList = projects.filter((project: Project) => {
+	let projectList = $derived(projects.filter((project: Project) => {
 		if (
 			project.description.includes(search_string) ||
 			project.name.includes(search_string) ||
@@ -49,13 +52,13 @@
 		) {
 			return project;
 		}
-	});
+	}));
 
 	// create a new project
 	/**
 	 * Determines whether the popup for creating a new project is openen or not
 	 */
-	let showCreateProjectPopover: boolean = false;
+	let showCreateProjectPopover: boolean = $state(false);
 
 	/**
 	 * Opens the project creation popup
@@ -111,13 +114,13 @@
 	}
 
 	// creation variables
-	let create_projectName: string = '';
-	let create_projectDescription: string = '';
+	let create_projectName: string = $state('');
+	let create_projectDescription: string = $state('');
 
 	/**
 	 * Indicates whether the project modify popup is enabled or not
 	 */
-	let showModifyProjectPopover: boolean = false;
+	let showModifyProjectPopover: boolean = $state(false);
 
 	/**
 	 *  Empties the modify variables
@@ -210,16 +213,16 @@
 	type Status = 'Preparing' | 'Development' | 'Finished';
 
 	// updating variables
-	let modify_projectName: string = '';
-	let modify_projectDescription: string = '';
-	let modify_projectStatus: Status = 'Preparing';
-	let modify_projectID: string = '';
-	let modify_projectTasks: Task[] = [];
-	$: reactive_modify_projectTasks = modify_projectTasks;
+	let modify_projectName: string = $state('');
+	let modify_projectDescription: string = $state('');
+	let modify_projectStatus: Status = $state('Preparing');
+	let modify_projectID: string = $state('');
+	let modify_projectTasks: Task[] = $state([]);
+	let reactive_modify_projectTasks = $derived(modify_projectTasks);
 	/**
 	 * Defines if the task-creation popup should be shown or not
 	 */
-	let showTaskCreationPopover: boolean = false;
+	let showTaskCreationPopover: boolean = $state(false);
 
 	/**
 	 * Simply sets the value of 'showTaskCreationPopover' to true and shows the create task popup.
@@ -300,13 +303,13 @@
 	}
 
 	// vars for tasks creation
-	let create_taskName: string = '';
-	let create_taskDescription: string = '';
+	let create_taskName: string = $state('');
+	let create_taskDescription: string = $state('');
 	let create_taskAssignees: User[] = [];
 
 	// add / remove assignees to list before storing it
-	let create_taskPossibleAssignees: User[] = [];
-	$: reactive_create_taskPossibleAssignees = create_taskPossibleAssignees;
+	let create_taskPossibleAssignees: User[] = $state([]);
+	let reactive_create_taskPossibleAssignees = $derived(create_taskPossibleAssignees);
 
 	/**
 	 * Compares a given parameter ID with all other ids of the users.
@@ -344,24 +347,24 @@
 
 <!-- project creation popver -->
 {#if showCreateProjectPopover}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_hxl:min-h-screen hxl:h-screen z-10 flex items-center justify-center bg-slate-900"
-		on:click={ResetCreateProjectPopover}
+		onclick={ResetCreateProjectPopover}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-3/5 max-w-[600px] relative grid grid-cols-1 grid-rows-5 p-4 transition-all duration-700 my-10"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={ResetCreateProjectPopover}
+				onclick={ResetCreateProjectPopover}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -409,7 +412,7 @@
 					placeholder="Handling all your request at once ..."
 					rows="8"
 					minlength="20"
-				/>
+				></textarea>
 			</div>
 
 			<!-- buttons -->
@@ -417,7 +420,7 @@
 				<!-- create project button -->
 				<button
 					disabled={loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'}
-					on:click={() => createProject()}
+					onclick={() => createProject()}
 					type="button"
 					class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
 						? 'opacity-50 text-xl cursor-not-allowed py-1 px-2'
@@ -431,24 +434,24 @@
 
 <!-- project modify popover -->
 {#if showModifyProjectPopover}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_h2xl:min-h-screen h2xl:h-screen z-10 flex items-center justify-center bg-slate-900"
-		on:click={resetProjectModifyPopover}
+		onclick={resetProjectModifyPopover}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-[90%] max-w-[600px] relative grid grid-cols-1 grid-rows-8 p-4 transition-all duration-700 my-10 gap-3"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={resetProjectModifyPopover}
+				onclick={resetProjectModifyPopover}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -496,7 +499,7 @@
 					placeholder="Give me some intel ..."
 					rows="8"
 					minlength="20"
-				/>
+				></textarea>
 			</div>
 			<!-- status -->
 			<div class="row-span-1 w-full h-full flex flex-col items-start justify-center">
@@ -553,7 +556,7 @@
 							class="{loggedInUser.role === 'Intern' || loggedInUser.role === 'Expert'
 								? 'opacity-50 cursor-not-allowed'
 								: 'hover:text-white hover:bg-black'} rounded-xl ring-2 ring-black px-2 py-1 font-medium text-lg transition-all duration-500"
-							on:click={OpenCreateTaskPopover}>Create Task</button
+							onclick={OpenCreateTaskPopover}>Create Task</button
 						>
 					</div>
 					<p class="text-center text-sm text-black font-medium">
@@ -569,7 +572,7 @@
 				<!-- update button -->
 				<button
 					disabled={isUserAnInternOrExpert(loggedInUser.role)}
-					on:click={modifyProject}
+					onclick={modifyProject}
 					type="button"
 					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
@@ -579,7 +582,7 @@
 				<!-- delete button -->
 				<button
 					disabled={isUserAnInternOrExpert(loggedInUser.role)}
-					on:click={() => deleteProject(modify_projectID)}
+					onclick={() => deleteProject(modify_projectID)}
 					type="button"
 					class="{isUserAnInternOrExpert(loggedInUser.role)
 						? 'text-xl cursor-not-allowed py-1 px-2 opacity-50'
@@ -593,24 +596,24 @@
 
 <!-- task creation popover -->
 {#if showTaskCreationPopover}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		transition:fade={{ duration: 700 }}
 		class="absolute top-0 left-0 w-screen till_h2xl:min-h-screen h2xl:h-screen z-10 flex items-center justify-center bg-slate-900"
-		on:click={CloseCreateTaskPopover}
+		onclick={CloseCreateTaskPopover}
 	>
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-xl bg-white w-[70%] sm:w-3/5 md:w-1/2 h-[70%] max-w-[600px] relative grid grid-cols-1 grid-rows-6 p-4 transition-all duration-700 my-10"
-			on:click|stopPropagation
+			onclick={stopPropagation(bubble('click'))}
 		>
 			<button
 				class="w-8 absolute right-2 top-2 text-4xl text-slate-600 hover:rotate-90 transition-transform duration-500 origin-center aspect-square flex items-center justify-center"
 				type="button"
-				on:click={CloseCreateTaskPopover}
+				onclick={CloseCreateTaskPopover}
 			>
 				<CloseCircleSolid class="w-full h-full text-black" />
 			</button>
@@ -658,7 +661,7 @@
 					placeholder="Build and test using NodeJS and Docker ..."
 					rows="8"
 					minlength="20"
-				/>
+				></textarea>
 			</div>
 			<!-- assignees -->
 			<div class="row-span-1 w-full h-full flex flex-col items-start justify-center">
@@ -682,7 +685,7 @@
 								<button
 									type="button"
 									class="text-base font-medium text-green-700 rounded-lg p-1 transition-all duration-500 hover:text-white hover:bg-green-700"
-									on:click={() => addUserToAssignees(assignee.id)}>Add</button
+									onclick={() => addUserToAssignees(assignee.id)}>Add</button
 								>
 							</div>
 						{/each}
@@ -697,7 +700,7 @@
 			<div class="row-span-1 w-full h-full flex items-center justify-around">
 				<!-- create project button -->
 				<button
-					on:click={() => createTask()}
+					onclick={() => createTask()}
 					disabled={isUserAnInternOrExpert(loggedInUser.role)}
 					type="button"
 					class="{isUserAnInternOrExpert(loggedInUser.role)
@@ -717,7 +720,7 @@
 			<button
 				type="button"
 				class="rounded-xl ring-2 ring-black p-2 font-medium text-xl transition-all duration-500 hover:text-white hover:bg-black hover:-translate-y-1"
-				on:click={OpenProjectCreateWindow}>Create Project</button
+				onclick={OpenProjectCreateWindow}>Create Project</button
 			>
 			<!-- search element -->
 			<input
@@ -750,7 +753,7 @@
 					<button
 						class="p-2 bg-black text-white rounded-lg transition-all duration-500 hover:ring-2 hover:ring-black hover:bg-white hover:text-black"
 						type="button"
-						on:click={() => {
+						onclick={() => {
 							openProjectDetails(project.id);
 						}}
 					>

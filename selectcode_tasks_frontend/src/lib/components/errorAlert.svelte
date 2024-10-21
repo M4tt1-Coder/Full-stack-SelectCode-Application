@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 
-	export let errorTitle = 'Error';
-	export let errorMessage = 'An error occurred!';
+	interface Props {
+		errorTitle?: string;
+		errorMessage?: string;
+	}
+
+	let { errorTitle = 'Error', errorMessage = 'An error occurred!' }: Props = $props();
 </script>
 
 <!-- error message container -->
