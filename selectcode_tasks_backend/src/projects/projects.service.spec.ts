@@ -3,8 +3,6 @@ import { ProjectsService } from './projects.service';
 import { Repository } from 'typeorm';
 import { Project, ProjectDTO } from './project.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-// import { MockType } from 'lib/testing/mockTypes';
-// import { projectRepoMockFactory } from 'lib/testing/mockFactories';
 
 // I could not figure out how to mock the repository of the project entity.
 // Using a mock factory I could implement some unit tests.

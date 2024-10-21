@@ -122,7 +122,7 @@ export async function create(user: User): Promise<User> {
 /**
  *	Modifies a user in the database.
  *
- * 	Get the user with its given ID.
+ * 	Gets the user with its given ID.
  *
  *	Applies the optional parameters to the user.
  *
